@@ -1,3 +1,73 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    /* Primary Colors */
+    --color-text-base: 17, 24, 39; /* Dark text for light mode */
+    --color-text-muted: 107, 114, 128; /* Muted text */
+    --color-text-inverted: 255, 255, 255; /* Light text for dark backgrounds */
+
+    --color-fill: 249, 250, 251; /* Background fill */
+    --color-fill-muted: 243, 244, 246; /* Muted background fill */
+
+    --color-button-accent: 59, 130, 246; /* Primary button color */
+    --color-button-accent-hover: 37, 99, 235; /* Hover state for primary buttons */
+    --color-button-muted: 229, 231, 235; /* Muted button color */
+    --color-button-muted-hover: 209, 213, 219; /* Hover state for muted buttons */
+
+    /* Secondary Colors */
+    --color-secondary-accent: 236, 72, 153; /* Secondary accent (e.g., pink) */
+    --color-secondary-accent-hover: 219, 39, 119; /* Secondary accent hover */
+
+    /* Borders */
+    --color-border: 203, 213, 225; /* Border color */
+    --color-border-muted: 229, 231, 235; /* Muted borders */
+
+    /* Shadows */
+    --color-shadow: 0, 0, 0, 0.1; /* Light shadow */
+    --color-shadow-dark: 0, 0, 0, 0.25; /* Dark shadow */
+
+    /* Alerts */
+    --color-success: 34, 197, 94; /* Success green */
+    --color-success-muted: 209, 250, 229; /* Muted success background */
+    --color-error: 239, 68, 68; /* Error red */
+    --color-error-muted: 254, 202, 202; /* Muted error background */
+    --color-warning: 234, 179, 8; /* Warning yellow */
+    --color-warning-muted: 254, 243, 199; /* Muted warning background */
+}
+
+.dark {
+    /* Primary Colors */
+    --color-text-base: 220, 220, 220; /* Light text for dark mode */
+    --color-text-muted: 150, 150, 150; /* Muted text */
+    --color-text-inverted: 20, 20, 20; /* Dark text for light backgrounds */
+
+    --color-fill: 30, 30, 30; /* Background fill */
+    --color-fill-muted: 45, 45, 45; /* Muted background fill */
+
+    --color-button-accent: 79, 70, 229; /* Primary button color */
+    --color-button-accent-hover: 67, 56, 202; /* Hover state for primary buttons */
+    --color-button-muted: 75, 85, 99; /* Muted button color */
+    --color-button-muted-hover: 55, 65, 81; /* Hover state for muted buttons */
+
+    /* Secondary Colors */
+    --color-secondary-accent: 214, 93, 177; /* Secondary accent */
+    --color-secondary-accent-hover: 190, 55, 133; /* Secondary accent hover */
+
+    /* Borders */
+    --color-border: 75, 85, 99; /* Border color */
+    --color-border-muted: 55, 65, 81; /* Muted borders */
+
+    /* Shadows */
+    --color-shadow: 0, 0, 0, 0.4; /* Light shadow */
+    --color-shadow-dark: 0, 0, 0, 0.6; /* Dark shadow */
+
+    /* Alerts */
+    --color-success: 52, 211, 153; /* Success green */
+    --color-success-muted: 22, 163, 74; /* Muted success background */
+    --color-error: 248, 113, 113; /* Error red */
+    --color-error-muted: 153, 27, 27; /* Muted error background */
+    --color-warning: 250, 204, 21; /* Warning yellow */
+    --color-warning-muted: 202, 138, 4; /* Muted warning background */
+}

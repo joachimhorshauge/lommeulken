@@ -1,0 +1,15 @@
+package home
+
+import (
+    "lommeulken/cmd/web/layout"
+)
+
+templ Index() {
+    @layout.LayoutIndex(true) {
+        @Hero()
+        <section class="p-4">
+          <h2 class="text-skin-base font-semibold text-lg mb-2">Latest Catches</h2>
+          <p class="text-skin-muted">There's nothing to see here yet!!</p>
+        </section>
+    }
+}
