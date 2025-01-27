@@ -24,15 +24,13 @@ services:
       - letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
   web:
-    image: ghcr.io/dreamsofcode-io/zenstats:${GIT_COMMIT_HASH:-latest}
+    image: ghcr.io/joachimhorshauge/lommeulken:${GIT_COMMIT_HASH:-latest}
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.web.loadbalancer.server.port=8080"
       - "traefik.http.routers.web.rule=Host(`joachimhorshauge.com`)"
       - "traefik.http.routers.web.entrypoints=websecure"
       - "traefik.http.routers.web.tls.certresolver=myresolver"
-    secrets:
-      - db-password
     environment:
       POSTGRES_DB: ${BLUEPRINT_DB_DATABASE}
       POSTGRES_USER: ${BLUEPRINT_DB_USERNAME}
