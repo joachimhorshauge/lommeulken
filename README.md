@@ -1,25 +1,53 @@
-# Lommeulken
+# Project lommeulken
 
-## Overview
+One Paragraph of project description goes here
 
-Welcome to the repository for the official website of Jysk Akademisk Lystfiskerforening - Lommeulken. This project aims to provide an online presence for the organization, offering details about its history, events, and membership opportunities. The website will also host key features such as the "Ulkekonkurrencen" leaderboard and information about upcoming fishing trips.
+## Getting Started
 
-## Tech Stack
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-This project is built using the following technologies:
+## MakeFile
 
-- Golang: The core programming language for backend development.
+Run build make command with tests
+```bash
+make all
+```
 
-- a-h/templ: A lightweight templating engine for building dynamic HTML content.
+Build the application
+```bash
+make build
+```
 
-- Air: A live reloading tool to speed up development.
+Run the application
+```bash
+make run
+```
+Create DB container
+```bash
+make docker-run
+```
 
-- Tailwind CSS: For styling and responsive design.
+Shutdown DB Container
+```bash
+make docker-down
+```
 
-- HTMX: To add interactivity and handle dynamic UI updates without relying heavily on JavaScript.
+DB Integrations Test:
+```bash
+make itest
+```
 
-- Goose: Database migration tool to manage schema changes.
+Live reload the application:
+```bash
+make watch
+```
 
-- SQLC: For type-safe SQL query generation and database abstraction.
+Run the test suite:
+```bash
+make test
+```
 
-- Docker: To containerize the application for deployment.
+Clean up binary from the last build:
+```bash
+make clean
+```
