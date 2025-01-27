@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"lommeulken/cmd/web"
+	"lommeulken/cmd/web/auth"
 	"lommeulken/cmd/web/home"
 )
 
@@ -26,6 +27,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/", home.HomeWebHandler)
 
 	r.Get("/health", s.healthHandler)
+	r.Get("/login", auth.LoginWebHandler)
+	r.Get("/signup", auth.SignupWebHandler)
 
 	fileServer := http.FileServer(http.FS(web.Files))
 	r.Handle("/assets/*", fileServer)

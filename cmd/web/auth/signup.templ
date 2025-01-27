@@ -1,0 +1,89 @@
+package auth
+
+import "lommeulken/cmd/web/layout"
+
+templ SignUp() {
+    @layout.Index(false) {
+    <div class="selection:bg-skin-secondary-accent selection:text-skin-inverted">
+      <!-- Background with an image -->
+      <!--suppress CssUnknownTarget -->
+    <div class="min-h-screen bg-skin-fill flex justify-center items-center"
+        style="background-image: url('/assets/img/fishing-scene.jpeg'); background-size: cover; background-position: center;">
+        <div class="p-8 flex-1">
+          <!-- Responsive width for the box -->
+          <div class="w-80 md:w-[32rem] bg-skin-fill-muted/0 rounded-3xl mx-auto overflow-hidden shadow-xl">
+            <div class="px-10 pt-4 pb-8 bg-skin-fill-muted/95 rounded-tr-4xl">
+              <h1 class="mt-4 text-2xl font-semibold text-skin-base text-center">Sign Up</h1>
+              <form class="mt-8" action="" method="POST">
+                <!-- First Name and Last Name on the same line for larger screens -->
+                <div class="grid grid-cols-1 gap-y-6 md:grid-cols-2 md:gap-x-4">
+                  <!-- First Name -->
+                  <div class="relative">
+                    <input id="firstName" name="firstName" type="text"
+                      class="peer h-10 w-full border-b-2 border-skin-base text-skin-base bg-skin-fill-muted/0 placeholder-transparent focus:outline-none focus:border-skin-secondary-accent"
+                      placeholder="First Name" />
+                    <label for="firstName"
+                      class="absolute left-0 -top-3.5 text-skin-muted text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-skin-muted peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-skin-base peer-focus:text-sm">
+                      First Name
+                    </label>
+                  </div>
+                  <!-- Last Name -->
+                  <div class="relative">
+                    <input id="lastName" name="lastName" type="text"
+                      class="peer h-10 w-full border-b-2 border-skin-base text-skin-base bg-skin-fill-muted/0 placeholder-transparent focus:outline-none focus:border-skin-secondary-accent"
+                      placeholder="Last Name" />
+                    <label for="lastName"
+                      class="absolute left-0 -top-3.5 text-skin-muted text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-skin-muted peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-skin-base peer-focus:text-sm">
+                      Last Name
+                    </label>
+                  </div>
+                </div>
+                <!-- Email -->
+                <div class="mt-6 relative">
+                  <input id="email" name="email" type="email"
+                    class="peer h-10 w-full border-b-2 border-skin-base text-skin-base bg-skin-fill-muted/0 placeholder-transparent focus:outline-none focus:border-skin-secondary-accent"
+                    placeholder="Email" />
+                  <label for="email"
+                    class="absolute left-0 -top-3.5 text-skin-muted text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-skin-muted peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-skin-base peer-focus:text-sm">
+                    Email Address
+                  </label>
+                </div>
+                <!-- Password and Confirm Password on the same line for larger screens -->
+                <div class="mt-6 grid grid-cols-1 gap-y-6 md:grid-cols-2 md:gap-x-4">
+                  <!-- Password -->
+                  <div class="relative">
+                    <input id="password" name="password" type="password"
+                      class="peer h-10 w-full border-b-2 border-skin-base text-skin-base bg-skin-fill-muted/0 placeholder-transparent focus:outline-none focus:border-skin-secondary-accent"
+                      placeholder="Password" />
+                    <label for="password"
+                      class="absolute left-0 -top-3.5 text-skin-muted text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-skin-muted peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-skin-base peer-focus:text-sm">
+                      Password
+                    </label>
+                  </div>
+                  <!-- Confirm Password -->
+                  <div class="relative">
+                    <input id="confirmPassword" name="confirmPassword" type="password"
+                      class="peer h-10 w-full border-b-2 border-skin-base text-skin-base bg-skin-fill-muted/0 placeholder-transparent focus:outline-none focus:border-skin-secondary-accent"
+                      placeholder="Confirm Password" />
+                    <label for="confirmPassword"
+                      class="absolute left-0 -top-3.5 text-skin-muted text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-skin-muted peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-skin-base peer-focus:text-sm">
+                      Confirm Password
+                    </label>
+                  </div>
+                </div>
+                <!-- Submit Button -->
+                <input type="submit" value="Sign Up"
+                  class="mt-20 px-4 py-2 rounded bg-skin-button-accent hover:bg-skin-button-accent-hover text-skin-inverted font-semibold text-center block w-full focus:outline-none focus:ring focus:ring-offset-2 focus:ring-skin-secondary-accent focus:ring-opacity-80 cursor-pointer" />
+              </form>
+              <!-- Login Link -->
+              <a href="/login"
+                class="mt-4 block text-sm text-center font-medium text-skin-secondary-accent hover:text-skin-secondary-accent-hover focus:outline-none focus:ring-2 focus:ring-skin-secondary-accent">
+                Already have an account? Log in
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+}
