@@ -75,7 +75,7 @@ jobs:
         uses: cssnr/stack-deploy-action@v1
         with:
           name: lommeulken
-          file: docker-stack.yaml
+          file: docker-compose.yaml
           host: joachimhorshauge.com
           user: deploy
           ssh_key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
