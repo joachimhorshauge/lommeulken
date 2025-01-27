@@ -18,7 +18,7 @@ RUN templ generate -path .
 RUN go build -v -o bin ./cmd/api
 
 # Stage 2: Runtime stage
-FROM gcr.io/distroless/cc-debian11
+FROM gcr.io/distroless/static-debian11
 
 WORKDIR /app
 
