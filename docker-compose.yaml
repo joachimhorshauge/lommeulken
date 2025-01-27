@@ -1,3 +1,5 @@
+version: "3.7"
+
 services:
   traefik:
     image: traefik:v3.1
@@ -23,6 +25,7 @@ services:
     volumes:
       - letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
+
   web:
     image: ghcr.io/joachimhorshauge/lommeulken:${GIT_COMMIT_HASH:-latest}
     labels:
@@ -31,33 +34,40 @@ services:
       - "traefik.http.routers.web.rule=Host(`joachimhorshauge.com`)"
       - "traefik.http.routers.web.entrypoints=websecure"
       - "traefik.http.routers.web.tls.certresolver=myresolver"
+    secrets:
+      - postgres_password
     environment:
-      POSTGRES_DB: ${BLUEPRINT_DB_DATABASE}
-      POSTGRES_USER: ${BLUEPRINT_DB_USERNAME}
-      POSTGRES_PASSWORD: ${BLUEPRINT_DB_PASSWORD}
+      - PORT=8080
+      - POSTGRES_HOST=db
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_SSLMODE=disable
     deploy:
       update_config:
         order: start-first
     depends_on:
       - db
 
-  psql_bp:
+  db:
     image: postgres:latest
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${BLUEPRINT_DB_DATABASE}
-      POSTGRES_USER: ${BLUEPRINT_DB_USERNAME}
-      POSTGRES_PASSWORD: ${BLUEPRINT_DB_PASSWORD}
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+    secrets:
+      - postgres_password
     ports:
-      - "${BLUEPRINT_DB_PORT}:5432"
+      - "5432:5432"
     volumes:
-      - psql_volume_bp:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD", "pg_isready" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - db-data:/var/lib/postgresql/data
+
+secrets:
+  postgres_password:
+    external: true
 
 volumes:
-  psql_volume_bp:
+  db-data:
   letsencrypt:

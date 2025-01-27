@@ -1,5 +1,5 @@
 # Stage 1: Build stage
-FROM golang:1.23 AS builder
+FROM golang:1.23-alpine AS builder
 
 WORKDIR /app
 
@@ -18,7 +18,7 @@ RUN templ generate -path .
 RUN go build -v -o bin ./cmd/api
 
 # Stage 2: Runtime stage
-FROM gcr.io/distroless/cc-debian11  # Use cc instead of base
+FROM alpine:latest AS runner
 
 WORKDIR /app
 
