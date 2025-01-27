@@ -38,17 +38,16 @@ func gracefulShutdown(apiServer *http.Server, done chan bool) {
 }
 
 func main() {
-
-	server := server.NewServer()
+	s := server.NewServer()
 
 	// Create a done channel to signal when the shutdown is complete
 	done := make(chan bool, 1)
 
 	// Run graceful shutdown in a separate goroutine
-	go gracefulShutdown(server, done)
+	go gracefulShutdown(s, done)
 
 	log.Println("Starting Server...")
-	err := server.ListenAndServe()
+	err := s.ListenAndServe()
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
 		panic(fmt.Sprintf("http server error: %s", err))
 	}
