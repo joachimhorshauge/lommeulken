@@ -11,6 +11,8 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--log.level=DEBUG"
+      - "--log.filePath=/var/log/traefik.log" # Log file location
     ports:
       - mode: host
         protocol: tcp
@@ -23,6 +25,10 @@ services:
     volumes:
       - letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
+      - /var/log:/var/log  # Mount the log directory
+    networks:
+      - lommeulken_network  # Connect to the shared network
+
   web:
     image: ghcr.io/joachimhorshauge/lommeulken:${GIT_COMMIT_HASH:-latest}
     labels:
@@ -39,7 +45,9 @@ services:
       update_config:
         order: start-first
     depends_on:
-      - db
+      - psql_bp
+    networks:
+      - lommeulken_network  # Connect to the shared network
 
   psql_bp:
     image: postgres:latest
@@ -57,7 +65,13 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - lommeulken_network  # Connect to the shared network
 
 volumes:
   psql_volume_bp:
   letsencrypt:
+
+networks:
+  lommeulken_network:
+    driver: bridge
