@@ -18,7 +18,7 @@ RUN templ generate -path .
 RUN go build -v -o bin ./cmd/api
 
 # Stage 2: Runtime stage
-FROM alpine:latest as runner
+FROM alpine:latest AS runner
 
 WORKDIR /app
 
