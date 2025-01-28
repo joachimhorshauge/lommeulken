@@ -49,6 +49,10 @@ func main() {
 	log.Println("Starting Server...")
 	err := s.ListenAndServe()
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
+		// Check for "address already in use" error
+		if errors.Is(err, syscall.EADDRINUSE) {
+			log.Fatalf("Port 8080 is already in use. Please free the port or use a different one.")
+		}
 		panic(fmt.Sprintf("http server error: %s", err))
 	}
 
