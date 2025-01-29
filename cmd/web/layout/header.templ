@@ -10,7 +10,6 @@ templ Header() {
 					<a class="block text-skin-inverted" href="/">
 						<span class="sr-only">Forside</span>
 						@Logo()
-						<!-- Matches text-inverted for light/dark mode -->
 					</a>
 				</div>
 				<div class="hidden md:block">
@@ -42,8 +41,12 @@ templ Header() {
 							</a>
 						</div>
 					</div>
+					<!-- Mobile Dropdown Button -->
 					<div class="block md:hidden">
-						<button class="rounded bg-skin-fill p-2 text-skin transition hover:text-skin-muted">
+						<button
+							class="rounded bg-skin-fill p-2 text-skin transition hover:text-skin-muted"
+							onclick="toggleDropdown()"
+						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								class="size-5"
@@ -60,16 +63,36 @@ templ Header() {
 			</div>
 		</div>
 	</header>
+
+	<!-- Mobile Navigation Menu -->
+	<div id="mobile-nav" class="md:hidden hidden">
+		<ul class="flex flex-col gap-6 mr-6 text-sm items-end">
+		    @NavItem("/signup", "Ny bruger")
+			@NavItem("/", "Forside")
+			@NavItem("/news", "Nyheder")
+			@NavItem("/reports", "Rapporter")
+			@NavItem("/competition", "Konkurrencen")
+			@NavItem("/records", "Klubrekorder")
+			@NavItem("/about", "Om os")
+		</ul>
+	</div>
+
+	<script>
+		function toggleDropdown() {
+			const mobileNav = document.getElementById('mobile-nav');
+			mobileNav.classList.toggle('hidden');
+		}
+	</script>
 }
 
 templ NavItem(href string, label string) {
     if middleware.GetCurrentPath(ctx) != href {
-	<a href={ templ.SafeURL(href) } class="text-skin-base hover:text-skin-muted">
-		{ label }
-	</a>
-	} else {
-	<a href={ templ.SafeURL(href) } class="font-bold hover:text-skin-muted">
-    		{ label }
-    </a>
+        <a href={ templ.SafeURL(href) } class="text-skin-base hover:text-skin-muted">
+            { label }
+        </a>
+    } else {
+        <a href={ templ.SafeURL(href) } class="font-bold hover:text-skin-muted">
+            { label }
+        </a>
     }
 }
