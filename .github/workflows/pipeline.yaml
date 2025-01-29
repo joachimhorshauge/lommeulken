@@ -1,0 +1,90 @@
+name: pipeline
+on:
+  push:
+    branches:
+      - "main"
+
+permissions:
+  packages: write
+  contents: read  # Ensure the token can read the repository
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.x'
+
+      - name: Install templ
+        shell: bash
+        run: go install github.com/a-h/templ/cmd/templ@latest
+
+      - name: Run templ generate
+        shell: bash
+        run: templ generate -path .
+
+      - name: Build
+        run: go build -v ./...
+
+      - name: Run tests
+        run: go test ./...
+
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    needs:
+      - run-tests
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: joachimhorshauge/lommeulken  # Ensure it's correct
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.x'
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/joachimhorshauge/lommeulken:latest
+            ghcr.io/joachimhorshauge/lommeulken:${{ github.sha }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - build-and-push-image
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create env file
+        run: echo "GIT_COMMIT_HASH=${{ github.sha }}" > ./envfile
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: https://ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy using Docker stack
+        uses: cssnr/stack-deploy-action@v1
+        with:
+          name: lommeulken
+          file: docker-compose.yaml
+          host: joachimhorshauge.com
+          user: deploy
+          ssh_key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          env_file: ./envfile
+          args: '--with-registry-auth'
