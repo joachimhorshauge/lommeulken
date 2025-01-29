@@ -13,7 +13,7 @@ templ SignUp() {
           <!-- Responsive width for the box -->
           <div class="w-80 md:w-[32rem] bg-skin-fill-muted/0 rounded-3xl mx-auto overflow-hidden shadow-xl">
             <div class="px-10 pt-4 pb-8 bg-skin-fill-muted/95 rounded-tr-4xl">
-              <h1 class="mt-4 text-2xl font-semibold text-skin-base text-center">Sign Up</h1>
+              <h1 class="mt-4 text-2xl font-semibold text-skin-base text-center">Ny bruger</h1>
               <form class="mt-8" action="" method="POST">
                 <!-- First Name and Last Name on the same line for larger screens -->
                 <div class="grid grid-cols-1 gap-y-6 md:grid-cols-2 md:gap-x-4">
@@ -24,7 +24,7 @@ templ SignUp() {
                       placeholder="First Name" />
                     <label for="firstName"
                       class="absolute left-0 -top-3.5 text-skin-muted text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-skin-muted peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-skin-base peer-focus:text-sm">
-                      First Name
+                      Fornavn
                     </label>
                   </div>
                   <!-- Last Name -->
@@ -34,7 +34,7 @@ templ SignUp() {
                       placeholder="Last Name" />
                     <label for="lastName"
                       class="absolute left-0 -top-3.5 text-skin-muted text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-skin-muted peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-skin-base peer-focus:text-sm">
-                      Last Name
+                      Efternavn
                     </label>
                   </div>
                 </div>
@@ -45,7 +45,7 @@ templ SignUp() {
                     placeholder="Email" />
                   <label for="email"
                     class="absolute left-0 -top-3.5 text-skin-muted text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-skin-muted peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-skin-base peer-focus:text-sm">
-                    Email Address
+                    Email
                   </label>
                 </div>
                 <!-- Password and Confirm Password on the same line for larger screens -->
@@ -57,7 +57,7 @@ templ SignUp() {
                       placeholder="Password" />
                     <label for="password"
                       class="absolute left-0 -top-3.5 text-skin-muted text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-skin-muted peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-skin-base peer-focus:text-sm">
-                      Password
+                      Kodeord
                     </label>
                   </div>
                   <!-- Confirm Password -->
@@ -67,18 +67,18 @@ templ SignUp() {
                       placeholder="Confirm Password" />
                     <label for="confirmPassword"
                       class="absolute left-0 -top-3.5 text-skin-muted text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-skin-muted peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-skin-base peer-focus:text-sm">
-                      Confirm Password
+                      Bekræft kodeord
                     </label>
                   </div>
                 </div>
                 <!-- Submit Button -->
-                <input type="submit" value="Sign Up"
+                <input type="submit" value="Tilmeld"
                   class="mt-20 px-4 py-2 rounded bg-skin-button-accent hover:bg-skin-button-accent-hover text-skin-inverted font-semibold text-center block w-full focus:outline-none focus:ring focus:ring-offset-2 focus:ring-skin-secondary-accent focus:ring-opacity-80 cursor-pointer" />
               </form>
               <!-- Login Link -->
               <a href="/login"
                 class="mt-4 block text-sm text-center font-medium text-skin-secondary-accent hover:text-skin-secondary-accent-hover focus:outline-none focus:ring-2 focus:ring-skin-secondary-accent">
-                Already have an account? Log in
+                Er du allerede medlem? Log på
               </a>
             </div>
           </div>
