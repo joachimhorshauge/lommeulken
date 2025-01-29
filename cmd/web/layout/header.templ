@@ -1,12 +1,14 @@
 package layout
 
+import "lommeulken/internal/middleware"
+
 templ Header() {
 	<header class="bg-skin-fill">
 		<div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
 			<div class="flex h-16 items-center justify-between">
 				<div class="md:flex md:items-center md:gap-12">
-					<a class="block text-skin-inverted" href="#">
-						<span class="sr-only">Home</span>
+					<a class="block text-skin-inverted" href="/">
+						<span class="sr-only">Forside</span>
 						@Logo()
 						<!-- Matches text-inverted for light/dark mode -->
 					</a>
@@ -14,24 +16,12 @@ templ Header() {
 				<div class="hidden md:block">
 					<nav aria-label="Global">
 						<ul class="flex items-center gap-6 text-sm">
-							<li>
-								<a class="text-skin-base transition hover:text-skin-muted" href="#">About </a>
-							</li>
-							<li>
-								<a class="text-skin-base transition hover:text-skin-muted" href="#">Careers </a>
-							</li>
-							<li>
-								<a class="text-skin-base transition hover:text-skin-muted" href="#">History </a>
-							</li>
-							<li>
-								<a class="text-skin-base transition hover:text-skin-muted" href="#">Services </a>
-							</li>
-							<li>
-								<a class="text-skin-base transition hover:text-skin-muted" href="#">Projects </a>
-							</li>
-							<li>
-								<a class="text-skin-base transition hover:text-skin-muted" href="#">Blog </a>
-							</li>
+							@NavItem("/", "Forside")
+							@NavItem("/news", "Nyheder")
+							@NavItem("/reports", "Rapporter")
+							@NavItem("/competition", "Konkurrencen")
+							@NavItem("/records", "Klubrekorder")
+							@NavItem("/about", "Om os")
 						</ul>
 					</nav>
 				</div>
@@ -39,16 +29,16 @@ templ Header() {
 					<div class="sm:flex sm:gap-4">
 						<a
 							class="rounded-md bg-skin-button-accent px-5 py-2.5 text-sm font-medium text-skin-inverted shadow hover:bg-skin-button-accent-hover"
-							href="#"
+							href="/login"
 						>
-							Login
+							Log på
 						</a>
 						<div class="hidden sm:flex">
 							<a
 								class="rounded-md bg-skin-button-muted px-5 py-2.5 text-sm font-medium text-skin-base hover:bg-skin-button-muted-hover"
-								href="#"
+								href="/signup"
 							>
-								Register
+								Ny bruger
 							</a>
 						</div>
 					</div>
@@ -70,4 +60,16 @@ templ Header() {
 			</div>
 		</div>
 	</header>
+}
+
+templ NavItem(href string, label string) {
+    if middleware.GetCurrentPath(ctx) != href {
+	<a href={ templ.SafeURL(href) } class="text-skin-base hover:text-skin-muted">
+		{ label }
+	</a>
+	} else {
+	<a href={ templ.SafeURL(href) } class="font-bold hover:text-skin-muted">
+    		{ label }
+    </a>
+    }
 }

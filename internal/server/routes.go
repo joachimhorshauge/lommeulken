@@ -2,13 +2,15 @@ package server
 
 import (
 	"encoding/json"
+	"lommeulken/cmd/web/home"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"lommeulken/cmd/web"
-	"lommeulken/cmd/web/home"
+	"lommeulken/cmd/web/auth"
+	customMiddleware "lommeulken/internal/middleware"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
@@ -23,9 +25,14 @@ func (s *Server) RegisterRoutes() http.Handler {
 		MaxAge:           300,
 	}))
 
-	r.Get("/", home.HomeWebHandler)
+	r.Group(func(r chi.Router) {
+		r.Use(customMiddleware.CurrentPathMiddleware)
+		r.Get("/", home.HomeWebHandler)
+	})
 
 	r.Get("/health", s.healthHandler)
+	r.Get("/login", auth.LoginWebHandler)
+	r.Get("/signup", auth.SignupWebHandler)
 
 	fileServer := http.FileServer(http.FS(web.Files))
 	r.Handle("/assets/*", fileServer)
