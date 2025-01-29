@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"lommeulken/cmd/web/home"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -9,7 +10,7 @@ import (
 	"github.com/go-chi/cors"
 	"lommeulken/cmd/web"
 	"lommeulken/cmd/web/auth"
-	"lommeulken/cmd/web/home"
+	customMiddleware "lommeulken/internal/middleware"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
@@ -24,7 +25,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 		MaxAge:           300,
 	}))
 
-	r.Get("/", home.HomeWebHandler)
+	r.Group(func(r chi.Router) {
+		r.Use(customMiddleware.CurrentPathMiddleware)
+		r.Get("/", home.HomeWebHandler)
+	})
 
 	r.Get("/health", s.healthHandler)
 	r.Get("/login", auth.LoginWebHandler)
