@@ -1,0 +1,18 @@
+# Environment variables
+.env*
+
+# Jetbrains
+.idea/*
+
+# Macos specific
+.DS_Store
+
+# air generated files
+tmp/*
+
+# Templ generated files
+*_templ.go
+
+# Tailwindcss
+cmd/web/assets/css/output.css
+tailwindcss
