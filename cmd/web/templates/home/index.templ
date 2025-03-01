@@ -3,13 +3,13 @@ package home
 import "github.com/joachimhorshauge/lommeulken/cmd/web/templates/layout"
 import "github.com/joachimhorshauge/lommeulken/cmd/web/components"
 
-templ Index(navLinks []components.NavLink) {
+templ Index(navLinks []components.NavLink, menus []components.NavMenu) {
 	@layout.Layout() {
 		<div x-data="{ sidebarOpen: false }" class="min-h-screen flex flex-col" >
 			@header()
 			<main class="flex-1 bg-blue-50 p-4">
 				if len(navLinks) > 0 {
-					@components.Sidebar(navLinks)
+					@components.Sidebar(navLinks, menus)
 				}
 			</main>
 		</div>
