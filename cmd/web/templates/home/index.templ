@@ -1,17 +1,36 @@
 package home
 
-templ Index() {
-<!DOCTYPE html>
-<html>
+import "github.com/joachimhorshauge/lommeulken/cmd/web/templates/layout"
+import "github.com/joachimhorshauge/lommeulken/cmd/web/components"
 
-<head>
-  <link href="/assets/css/output.css" rel="stylesheet" />
-</head>
+templ Index(navLinks []components.NavLink) {
+	@layout.Layout() {
+		<div x-data="{ sidebarOpen: false }" class="min-h-screen flex flex-col" >
+			@header()
+			<main class="flex-1 bg-blue-50 p-4">
+				if len(navLinks) > 0 {
+					@components.Sidebar(navLinks)
+				}
+			</main>
+		</div>
+	}
+}
 
-<body>
-  <h1 class="text-red-500">My First Heading</h1>
-  <p>My first paragraph.</p>
-</body>
+templ header() {
+	<header class="sticky top-0 bg-blue-200 p-4 flex items-center justify-between">
+		<div class="flex items-center">
+			<img src="/assets/img/logo.png" alt="Logo" class="h-10 w-auto">
+		</div>
 
-</html>
+		<span>Lommeulken</span>
+
+		<button
+		    x-on:click="sidebarOpen = true"
+		    class="text-gray-800 focus:outline-none"
+		>
+			<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+			</svg>
+		</button>
+	</header>
 }
