@@ -2,8 +2,9 @@ package home
 
 import "github.com/joachimhorshauge/lommeulken/cmd/web/templates/layout"
 import "github.com/joachimhorshauge/lommeulken/cmd/web/components"
+import "github.com/joachimhorshauge/lommeulken/cmd/web/components/home"
 
-templ Index(navLinks []components.NavLink, menus []components.NavMenu) {
+templ Index(navLinks []components.NavLink, menus []components.NavMenu, carouselSlides []home.SlideParams) {
 	@layout.Layout() {
 		<div x-data="{ sidebarOpen: false }" class="min-h-screen flex flex-col" >
 			@header()
@@ -11,6 +12,9 @@ templ Index(navLinks []components.NavLink, menus []components.NavMenu) {
 				if len(navLinks) > 0 {
 					@components.Sidebar(navLinks, menus)
 				}
+				<div class="flex justify-center items-center">
+				    @home.CtaCarousel(carouselSlides)
+			    </div>
 			</main>
 		</div>
 	}
