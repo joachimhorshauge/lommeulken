@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -19,8 +20,8 @@ func gracefulShutdown(apiServer *http.Server, done chan bool) {
 	<-ctx.Done()
 
 	log.Println("shutting down gracefully, press Ctrl+C again to force")
-	
-    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := apiServer.Shutdown(ctx); err != nil {
 		log.Printf("Server forced to shutdown with error: %v", err)
@@ -33,18 +34,17 @@ func gracefulShutdown(apiServer *http.Server, done chan bool) {
 
 func main() {
 
-	server := server.NewServer()
+	s := server.NewServer()
 
 	done := make(chan bool, 1)
 
-	go gracefulShutdown(server, done)
+	go gracefulShutdown(s, done)
 
-	err := server.ListenAndServe()
-	if err != nil && err != http.ErrServerClosed {
-		panic(fmt.Sprintf("http server error: %s", err))
+	err := s.ListenAndServe()
+	if err != nil && !errors.Is(err, http.ErrServerClosed) {
+		panic(fmt.Sprintf("http s error: %s", err))
 	}
 
 	<-done
 	log.Println("Graceful shutdown complete.")
 }
-
