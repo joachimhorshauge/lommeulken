@@ -2,14 +2,20 @@ package home
 
 import "github.com/joachimhorshauge/lommeulken/cmd/web/templates/layout"
 import "github.com/joachimhorshauge/lommeulken/cmd/web/components"
+import "github.com/joachimhorshauge/lommeulken/cmd/web/components/home"
 
-templ Index(navLinks []components.NavLink) {
+templ Index(navLinks []components.NavLink, menus []components.NavMenu, carouselSlides []home.SlideParams) {
 	@layout.Layout() {
-		<div x-data="{ sidebarOpen: false }" class="min-h-screen flex flex-col" >
+		<div x-data="{ sidebarOpen: false }" class="min-h-screen flex flex-col">
 			@header()
 			<main class="flex-1 bg-blue-50 p-4">
+				<div class="flex justify-center items-center">
+					@home.CtaCarousel(carouselSlides)
+				</div>
+				<h2 class="text-3xl text-bold text-center p-12">Seneste fangster </h2>
+				@home.CardContainer()
 				if len(navLinks) > 0 {
-					@components.Sidebar(navLinks)
+					@components.Sidebar(navLinks, menus)
 				}
 			</main>
 		</div>
@@ -17,16 +23,14 @@ templ Index(navLinks []components.NavLink) {
 }
 
 templ header() {
-	<header class="sticky top-0 bg-blue-200 p-4 flex items-center justify-between">
+	<header class="sticky top-0 bg-blue-200 p-4 flex items-center justify-between z-20">
 		<div class="flex items-center">
-			<img src="/assets/img/logo.png" alt="Logo" class="h-10 w-auto">
+			<img src="/assets/img/logo.png" alt="Logo" class="h-10 w-auto"/>
 		</div>
-
 		<span>Lommeulken</span>
-
 		<button
-		    x-on:click="sidebarOpen = true"
-		    class="text-gray-800 focus:outline-none"
+			x-on:click="sidebarOpen = true"
+			class="text-gray-800 focus:outline-none"
 		>
 			<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
