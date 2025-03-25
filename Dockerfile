@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM golang:1.23-alpine AS build
+FROM golang:1.24-alpine AS build
 
 # Install curl and required libraries for tailwindcss
 RUN apk add --no-cache curl libstdc++ libgcc
