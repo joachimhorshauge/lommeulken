@@ -1,4 +1,4 @@
-:wpackage server
+package server
 
 import (
 	"fmt"
