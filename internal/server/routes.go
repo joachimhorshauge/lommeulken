@@ -3,27 +3,30 @@ package server
 import (
 	"encoding/json"
 	"log"
+	"lommeulken/cmd/web"
+	"lommeulken/internal/handler"
+	"lommeulken/internal/middleware"
 	"net/http"
 
 	"github.com/a-h/templ"
-	"lommeulken/cmd/web"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
 	mux := http.NewServeMux()
 
 	// Register routes
-	mux.HandleFunc("/", s.HelloWorldHandler)
+	mux.Handle("/", templ.Handler(web.HelloForm()))
 
 	mux.HandleFunc("/health", s.healthHandler)
 
 	fileServer := http.FileServer(http.FS(web.Files))
 	mux.Handle("/assets/", fileServer)
-	mux.Handle("/web", templ.Handler(web.HelloForm()))
-	mux.HandleFunc("/hello", web.HelloWebHandler)
+	mux.HandleFunc("/signup", handler.HandleSignup)
+	mux.HandleFunc("/login", handler.HandleLogin)
+	mux.HandleFunc("/logout", handler.HandleLogout)
 
 	// Wrap the mux with CORS middleware
-	return s.corsMiddleware(mux)
+	return s.corsMiddleware(middleware.WithUser(mux))
 }
 
 func (s *Server) corsMiddleware(next http.Handler) http.Handler {

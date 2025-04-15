@@ -1,0 +1,68 @@
+package web
+
+type UserCredentials struct {
+	Email    string
+	Password string
+}
+
+type LoginErrors struct {
+	InvalidCredentials string
+	EmailNotVerified   string
+}
+
+templ LoginIndex() {
+	@Base() {
+		<div class="flex min-h-screen items-center justify-center bg-gray-100">
+			<div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+				<h1 class="text-2xl font-semibold text-center text-gray-800">Login</h1>
+				@LoginForm(UserCredentials{}, LoginErrors{})
+			</div>
+		</div>
+	}
+}
+
+templ LoginForm(user UserCredentials, errors LoginErrors) {
+	<div id="login-form" class="mt-6">
+		<form
+			class="flex flex-col gap-4"
+			hx-post="/login"
+			hx-target="#login-form"
+			hx-swap="outerHTML"
+		>
+			<div>
+				<label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+				<input
+					type="text"
+					id="email"
+					name="email"
+					placeholder="E-Mail"
+					value={ user.Email }
+					required
+					class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+				/>
+			</div>
+			<div>
+				<label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+				<input
+					type="password"
+					id="password"
+					name="password"
+					placeholder="Password"
+					required
+					class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+				/>
+			</div>
+			if errors.InvalidCredentials != "" {
+				<p class="text-red-500">{ errors.InvalidCredentials }</p>
+			} else if errors.EmailNotVerified != "" {
+				<p class="text-red-500">{ errors.EmailNotVerified }</p>
+			}
+			<button
+				type="submit"
+				class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+			>
+				Login
+			</button>
+		</form>
+	</div>
+}

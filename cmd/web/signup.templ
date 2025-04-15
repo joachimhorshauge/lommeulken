@@ -1,0 +1,106 @@
+package web
+
+type UserSignupCredentials struct {
+    Email    string
+    Username string
+    Password string
+    ConfirmPassword string
+}
+
+type SignupErrors struct {
+    EmailInvalid          string
+    UsernameInvalid       string
+    PasswordInvalid       string
+    PasswordMismatch      string
+}
+
+templ SignupIndex() {
+    @Base() {
+        <div class="flex min-h-screen items-center justify-center bg-gray-100">
+            <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+                <h1 class="text-2xl font-semibold text-center text-gray-800">Signup</h1>
+                @SignupForm(UserSignupCredentials{}, SignupErrors{})
+            </div>
+        </div>
+    }
+}
+
+templ SignupForm(user UserSignupCredentials, errors SignupErrors) {
+    <div id="signup-form" class="mt-6">
+        <form
+            class="flex flex-col gap-4"
+            hx-post="/signup"
+            hx-target="#signup-form"
+            hx-swap="outerHTML"
+        >
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Email"
+                    value={ user.Email }
+                    required
+                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+                if errors.EmailInvalid != "" {
+                    <p class="text-red-500 text-sm mt-1">{ errors.EmailInvalid }</p>
+                }
+            </div>
+
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Username"
+                    value={ user.Username }
+                    required
+                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+                if errors.UsernameInvalid != "" {
+                    <p class="text-red-500 text-sm mt-1">{ errors.UsernameInvalid }</p>
+                }
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Password"
+                    required
+                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+                if errors.PasswordInvalid != "" {
+                    <p class="text-red-500 text-sm mt-1">{ errors.PasswordInvalid }</p>
+                }
+            </div>
+
+            <div>
+                <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    placeholder="Retype Password"
+                    required
+                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+                if errors.PasswordMismatch != "" {
+                    <p class="text-red-500 text-sm mt-1">{ errors.PasswordMismatch }</p>
+                }
+            </div>
+
+            <button
+                type="submit"
+                class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+                Create Account
+            </button>
+        </form>
+    </div>
+}
