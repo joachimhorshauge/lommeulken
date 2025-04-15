@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"log/slog"
 	"lommeulken/internal/supabase"
 	"lommeulken/types"
 	"net/http"
@@ -32,8 +31,6 @@ func WithUser(next http.Handler) http.Handler {
 			Email:    resp.Email,
 			LoggedIn: true,
 		}
-
-		slog.Info("User logged in", "user", user)
 
 		ctx := context.WithValue(r.Context(), types.UserContextKey, user)
 		next.ServeHTTP(w, r.WithContext(ctx))

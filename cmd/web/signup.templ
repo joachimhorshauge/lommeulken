@@ -1,106 +1,138 @@
 package web
 
 type UserSignupCredentials struct {
-    Email    string
-    Username string
-    Password string
-    ConfirmPassword string
+	Email           string
+	Username        string
+	Password        string
+	ConfirmPassword string
 }
 
 type SignupErrors struct {
-    EmailInvalid          string
-    UsernameInvalid       string
-    PasswordInvalid       string
-    PasswordMismatch      string
+	EmailInvalid     string
+	UsernameInvalid  string
+	PasswordInvalid  string
+	PasswordMismatch string
 }
 
 templ SignupIndex() {
-    @Base() {
-        <div class="flex min-h-screen items-center justify-center bg-gray-100">
-            <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
-                <h1 class="text-2xl font-semibold text-center text-gray-800">Signup</h1>
-                @SignupForm(UserSignupCredentials{}, SignupErrors{})
-            </div>
-        </div>
-    }
+	@Base() {
+		<div class="selection:bg-blue-200 selection:text-white">
+			<div
+				class="min-h-screen bg-white flex justify-center items-center"
+				style="background-image: url('/assets/img/fishing-scene.jpeg'); background-size: cover; background-position: center;"
+			>
+				<div class="p-8 flex-1">
+					<div class="w-80 md:w-[32rem] bg-white/0 rounded-3xl mx-auto overflow-hidden shadow-xl">
+						<div class="px-10 pt-4 pb-8 bg-white/95 rounded-tr-4xl">
+							<h1 class="mt-4 text-2xl font-semibold text-gray-900 text-center">Ny bruger</h1>
+							@SignupForm(UserSignupCredentials{}, SignupErrors{})
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
 }
 
 templ SignupForm(user UserSignupCredentials, errors SignupErrors) {
-    <div id="signup-form" class="mt-6">
-        <form
-            class="flex flex-col gap-4"
-            hx-post="/signup"
-            hx-target="#signup-form"
-            hx-swap="outerHTML"
-        >
-            <div>
-                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="Email"
-                    value={ user.Email }
-                    required
-                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                />
-                if errors.EmailInvalid != "" {
-                    <p class="text-red-500 text-sm mt-1">{ errors.EmailInvalid }</p>
-                }
-            </div>
-
-            <div>
-                <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="Username"
-                    value={ user.Username }
-                    required
-                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                />
-                if errors.UsernameInvalid != "" {
-                    <p class="text-red-500 text-sm mt-1">{ errors.UsernameInvalid }</p>
-                }
-            </div>
-
-            <div>
-                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Password"
-                    required
-                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                />
-                if errors.PasswordInvalid != "" {
-                    <p class="text-red-500 text-sm mt-1">{ errors.PasswordInvalid }</p>
-                }
-            </div>
-
-            <div>
-                <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-                <input
-                    type="password"
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    placeholder="Retype Password"
-                    required
-                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                />
-                if errors.PasswordMismatch != "" {
-                    <p class="text-red-500 text-sm mt-1">{ errors.PasswordMismatch }</p>
-                }
-            </div>
-
-            <button
-                type="submit"
-                class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-                Create Account
-            </button>
-        </form>
-    </div>
+	<div id="signup-form" class="mt-6">
+		<form
+			class="mt-8 flex flex-col gap-6"
+			hx-post="/signup"
+			hx-target="#signup-form"
+			hx-swap="outerHTML"
+		>
+			<div class="relative">
+				<input
+					type="email"
+					id="email"
+					name="email"
+					value={ user.Email }
+					placeholder="Email"
+					required
+					class="peer h-10 w-full border-b-2 border-gray-600 bg-transparent text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
+				/>
+				<label
+					for="email"
+					class="absolute left-0 -top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-900 peer-focus:text-sm"
+				>
+					Email
+				</label>
+				if errors.EmailInvalid != "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.EmailInvalid }</p>
+				}
+			</div>
+			<div class="relative">
+				<input
+					type="text"
+					id="username"
+					name="username"
+					value={ user.Username }
+					placeholder="Brugernavn"
+					required
+					class="peer h-10 w-full border-b-2 border-gray-600 bg-transparent text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
+				/>
+				<label
+					for="username"
+					class="absolute left-0 -top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-900 peer-focus:text-sm"
+				>
+					Brugernavn
+				</label>
+				if errors.UsernameInvalid != "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.UsernameInvalid }</p>
+				}
+			</div>
+			<div class="relative">
+				<input
+					type="password"
+					id="password"
+					name="password"
+					placeholder="Kodeord"
+					required
+					class="peer h-10 w-full border-b-2 border-gray-600 bg-transparent text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
+				/>
+				<label
+					for="password"
+					class="absolute left-0 -top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-900 peer-focus:text-sm"
+				>
+					Kodeord
+				</label>
+				if errors.PasswordInvalid != "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.PasswordInvalid }</p>
+				}
+			</div>
+			<div class="relative">
+				<input
+					type="password"
+					id="confirmPassword"
+					name="confirmPassword"
+					placeholder="Bekræft kodeord"
+					required
+					class="peer h-10 w-full border-b-2 border-gray-600 bg-transparent text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
+				/>
+				<label
+					for="confirmPassword"
+					class="absolute left-0 -top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-900 peer-focus:text-sm"
+				>
+					Bekræft kodeord
+				</label>
+				if errors.PasswordMismatch != "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.PasswordMismatch }</p>
+				}
+			</div>
+			<button
+				type="submit"
+				class="mt-10 w-full py-2 px-4 rounded bg-blue-600 hover:bg-blue-700 text-white font-semibold text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+			>
+				Tilmeld
+			</button>
+		</form>
+		<a
+			href="/login"
+			class="mt-4 block text-sm text-center font-medium text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+		>
+			Er du allerede medlem? Log på
+		</a>
+	</div>
 }
+
