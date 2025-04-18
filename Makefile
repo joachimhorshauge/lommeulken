@@ -18,7 +18,7 @@ templ-install:
 	fi
 tailwind-install:
 	
-	@if [ ! -f tailwindcss ]; then curl -sL https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.10/tailwindcss-macos-x64 -o tailwindcss; fi
+	@if [ ! -f tailwindcss ]; then curl -sL https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-macos-arm64 -o tailwindcss; fi
 	@chmod +x tailwindcss
 
 build: tailwind-install templ-install
