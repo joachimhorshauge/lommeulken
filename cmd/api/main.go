@@ -4,12 +4,17 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
+	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"lommeulken/internal/handler"
 	"lommeulken/internal/server"
+
+	"github.com/Backblaze/blazer/b2"
 )
 
 func gracefulShutdown(apiServer *http.Server, done chan bool) {
@@ -37,8 +42,23 @@ func gracefulShutdown(apiServer *http.Server, done chan bool) {
 }
 
 func main() {
+	// Initialize Backblaze B2 client
+	b2Client, err := b2.NewClient(
+		context.Background(),
+		os.Getenv("B2_APPLICATION_KEY_ID"),
+		os.Getenv("B2_APPLICATION_KEY"),
+	)
+	if err != nil {
+		slog.Error("Failed to initialize B2 client", "Error", err)
+	}
 
-	server := server.NewServer()
+	handler := handler.NewHandler(
+		b2Client,
+		os.Getenv("B2_BUCKET_NAME"),
+		os.Getenv("B2_BASE_URL"),
+	)
+
+	server := server.NewServer(handler)
 
 	// Create a done channel to signal when the shutdown is complete
 	done := make(chan bool, 1)
@@ -46,7 +66,7 @@ func main() {
 	// Run graceful shutdown in a separate goroutine
 	go gracefulShutdown(server, done)
 
-	err := server.ListenAndServe()
+	err = server.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
 		panic(fmt.Sprintf("http server error: %s", err))
 	}

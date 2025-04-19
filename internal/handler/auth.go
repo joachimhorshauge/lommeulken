@@ -13,7 +13,7 @@ import (
 	"github.com/nedpals/supabase-go"
 )
 
-func HandleSignup(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		err := web.SignupIndex().Render(r.Context(), w)
 		if err != nil {
@@ -64,7 +64,7 @@ func HandleSignup(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleLogin(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		err := web.LoginIndex().Render(r.Context(), w)
 		if err != nil {
@@ -114,7 +114,7 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleLogout(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleLogout(w http.ResponseWriter, r *http.Request) {
 	cookie := http.Cookie{
 		Value:    "",
 		Name:     "at",

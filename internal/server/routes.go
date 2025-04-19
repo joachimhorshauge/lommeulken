@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"lommeulken/cmd/web"
-	"lommeulken/internal/handler"
 	"lommeulken/internal/middleware"
 	"net/http"
 
@@ -21,9 +20,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	fileServer := http.FileServer(http.FS(web.Files))
 	mux.Handle("/assets/", fileServer)
-	mux.HandleFunc("/signup", handler.HandleSignup)
-	mux.HandleFunc("/login", handler.HandleLogin)
-	mux.HandleFunc("/logout", handler.HandleLogout)
+	mux.HandleFunc("/signup", s.handler.HandleSignup)
+	mux.HandleFunc("/login", s.handler.HandleLogin)
+	mux.HandleFunc("/logout", s.handler.HandleLogout)
+	mux.Handle("/catches", templ.Handler(web.CatchesIndex()))
+	mux.HandleFunc("/catches/new", s.handler.NewCatchHandler)
 
 	// Wrap the mux with CORS middleware
 	return s.corsMiddleware(middleware.WithUser(mux))

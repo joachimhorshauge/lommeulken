@@ -5,7 +5,7 @@ import (
 )
 
 templ Sidebar() {
-	<div x-data="{ sidebarIsOpen: false }" class="relative flex w-full flex-col md:flex-row">
+	<div x-cloak x-data="{ sidebarIsOpen: false }" class="relative flex w-full flex-col md:flex-row">
 		<!-- This allows screen readers to skip the sidebar and go directly to the main content. -->
 		<a class="sr-only" href="#main-content">skip to the main content</a>
 		<!-- dark overlay for when the sidebar is open on smaller screens  -->
