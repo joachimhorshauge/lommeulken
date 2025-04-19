@@ -11,10 +11,12 @@ import (
 	"syscall"
 	"time"
 
+	"lommeulken/gen/dbstore"
 	"lommeulken/internal/handler"
 	"lommeulken/internal/server"
 
 	"github.com/Backblaze/blazer/b2"
+	"github.com/jackc/pgx/v5"
 )
 
 func gracefulShutdown(apiServer *http.Server, done chan bool) {
@@ -52,10 +54,21 @@ func main() {
 		slog.Error("Failed to initialize B2 client", "Error", err)
 	}
 
+	ctx := context.Background()
+
+	conn, err := pgx.Connect(ctx, os.Getenv("GOOSE_DBSTRING"))
+	if err != nil {
+		slog.Error("Failed to connect to database", "Error", err)
+	}
+	defer conn.Close(ctx)
+
+	queries := dbstore.New(conn)
+
 	handler := handler.NewHandler(
 		b2Client,
 		os.Getenv("B2_BUCKET_NAME"),
 		os.Getenv("B2_BASE_URL"),
+		queries,
 	)
 
 	server := server.NewServer(handler)
