@@ -8,6 +8,7 @@ package dbstore
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -18,7 +19,7 @@ RETURNING id, email, first_name, last_name, address, avatar_url, bio, created_at
 `
 
 type CreateUserParams struct {
-	ID        pgtype.UUID
+	ID        uuid.UUID
 	Email     pgtype.Text
 	FirstName pgtype.Text
 	LastName  pgtype.Text
@@ -57,7 +58,7 @@ DELETE FROM users
 WHERE id = $1
 `
 
-func (q *Queries) DeleteUser(ctx context.Context, id pgtype.UUID) error {
+func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
 	_, err := q.db.Exec(ctx, deleteUser, id)
 	return err
 }
@@ -89,7 +90,7 @@ SELECT id, email, first_name, last_name, address, avatar_url, bio, created_at, u
 WHERE id = $1
 `
 
-func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (User, error) {
+func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (User, error) {
 	row := q.db.QueryRow(ctx, getUserByID, id)
 	var i User
 	err := row.Scan(
@@ -161,7 +162,7 @@ RETURNING id, email, first_name, last_name, address, avatar_url, bio, created_at
 `
 
 type UpdateUserParams struct {
-	ID        pgtype.UUID
+	ID        uuid.UUID
 	Email     pgtype.Text
 	FirstName pgtype.Text
 	LastName  pgtype.Text

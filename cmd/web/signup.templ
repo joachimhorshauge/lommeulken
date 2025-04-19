@@ -5,11 +5,12 @@ type UserSignupCredentials struct {
 	Username        string
 	Password        string
 	ConfirmPassword string
+	FirstName       string
+	LastName        string
 }
 
 type SignupErrors struct {
 	EmailInvalid     string
-	UsernameInvalid  string
 	PasswordInvalid  string
 	PasswordMismatch string
 }
@@ -62,25 +63,41 @@ templ SignupForm(user UserSignupCredentials, errors SignupErrors) {
 					<p class="text-red-500 text-sm mt-1">{ errors.EmailInvalid }</p>
 				}
 			</div>
-			<div class="relative">
-				<input
-					type="text"
-					id="username"
-					name="username"
-					value={ user.Username }
-					placeholder="Brugernavn"
-					required
-					class="peer h-10 w-full border-b-2 border-gray-600 bg-transparent text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
-				/>
-				<label
-					for="username"
-					class="absolute left-0 -top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-900 peer-focus:text-sm"
-				>
-					Brugernavn
-				</label>
-				if errors.UsernameInvalid != "" {
-					<p class="text-red-500 text-sm mt-1">{ errors.UsernameInvalid }</p>
-				}
+			<div class="grid grid-cols-1 gap-y-6 md:grid-cols-2 md:gap-x-4">
+				<!-- First Name -->
+				<div class="relative">
+					<input
+						id="firstName"
+						name="firstName"
+						type="text"
+						value={ user.FirstName }
+						class="peer h-10 w-full border-b-2 border-gray-600 bg-transparent text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
+						placeholder="First Name"
+					/>
+					<label
+						for="firstName"
+						class="absolute left-0 -top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-900 peer-focus:text-sm"
+					>
+						Fornavn
+					</label>
+				</div>
+				<!-- Last Name -->
+				<div class="relative">
+					<input
+						id="lastName"
+						name="lastName"
+						type="text"
+						value={ user.LastName }
+						class="peer h-10 w-full border-b-2 border-gray-600 bg-transparent text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
+						placeholder="Last Name"
+					/>
+					<label
+						for="lastName"
+						class="absolute left-0 -top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-900 peer-focus:text-sm"
+					>
+						Efternavn
+					</label>
+				</div>
 			</div>
 			<div class="relative">
 				<input
@@ -135,4 +152,3 @@ templ SignupForm(user UserSignupCredentials, errors SignupErrors) {
 		</a>
 	</div>
 }
-

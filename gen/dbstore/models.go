@@ -5,12 +5,13 @@
 package dbstore
 
 import (
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Post struct {
-	ID          pgtype.UUID
-	UserID      pgtype.UUID
+	ID          uuid.UUID
+	UserID      uuid.UUID
 	TripID      pgtype.UUID
 	Title       string
 	Description pgtype.Text
@@ -24,15 +25,15 @@ type Post struct {
 }
 
 type PostImage struct {
-	ID        pgtype.UUID
-	PostID    pgtype.UUID
+	ID        uuid.UUID
+	PostID    uuid.UUID
 	Url       string
 	IsPrimary pgtype.Bool
 	CreatedAt pgtype.Timestamptz
 }
 
 type Trip struct {
-	ID             pgtype.UUID
+	ID             uuid.UUID
 	Title          string
 	Description    pgtype.Text
 	StartDate      pgtype.Date
@@ -45,8 +46,8 @@ type Trip struct {
 }
 
 type TripImage struct {
-	ID        pgtype.UUID
-	TripID    pgtype.UUID
+	ID        uuid.UUID
+	TripID    uuid.UUID
 	IsPrimary pgtype.Bool
 	Url       string
 	Caption   pgtype.Text
@@ -54,7 +55,7 @@ type TripImage struct {
 }
 
 type User struct {
-	ID        pgtype.UUID
+	ID        uuid.UUID
 	Email     pgtype.Text
 	FirstName pgtype.Text
 	LastName  pgtype.Text

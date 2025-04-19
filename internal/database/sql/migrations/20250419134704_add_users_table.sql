@@ -12,7 +12,7 @@ CREATE TABLE users (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_users_username ON users(email);
 -- +goose StatementEnd
 
 
