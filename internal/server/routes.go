@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"lommeulken/cmd/web"
-	"lommeulken/internal/middleware"
 	"net/http"
 
 	"github.com/a-h/templ"
@@ -27,7 +26,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.HandleFunc("/catches/new", s.handler.NewCatchHandler)
 
 	// Wrap the mux with CORS middleware
-	return s.corsMiddleware(middleware.WithUser(mux))
+	return s.corsMiddleware(s.middleware.WithUser(mux))
 }
 
 func (s *Server) corsMiddleware(next http.Handler) http.Handler {

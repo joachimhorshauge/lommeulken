@@ -13,6 +13,7 @@ import (
 
 	"lommeulken/gen/dbstore"
 	"lommeulken/internal/handler"
+	"lommeulken/internal/middleware"
 	"lommeulken/internal/server"
 
 	"github.com/Backblaze/blazer/b2"
@@ -71,7 +72,9 @@ func main() {
 		queries,
 	)
 
-	server := server.NewServer(handler)
+	middleware := middleware.NewMiddleware(queries)
+
+	server := server.NewServer(handler, middleware)
 
 	// Create a done channel to signal when the shutdown is complete
 	done := make(chan bool, 1)

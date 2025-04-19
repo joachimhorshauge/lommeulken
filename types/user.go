@@ -10,4 +10,5 @@ type AuthenticatedUser struct {
 	FirstName string
 	LastName  string
 	AvatarUrl string
+	ID        string
 }

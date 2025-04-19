@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"lommeulken/cmd/view"
 )
 
@@ -49,11 +50,15 @@ templ Sidebar() {
 					<!-- Profile Menu  -->
 					<div x-data="{ userDropdownIsOpen: false }" class="relative" x-on:keydown.esc.window="userDropdownIsOpen = false">
 						<button type="button" class="flex w-full items-center rounded-radius gap-2 p-2 text-left text-on-surface hover:bg-primary/5 hover:text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark" x-bind:class="userDropdownIsOpen ? 'bg-primary/10 dark:bg-primary-dark/10' : ''" aria-haspopup="true" x-on:click="userDropdownIsOpen = ! userDropdownIsOpen" x-bind:aria-expanded="userDropdownIsOpen">
-							<img src="https://penguinui.s3.amazonaws.com/component-assets/avatar-7.webp" class="size-8 object-cover rounded-radius" alt="avatar" aria-hidden="true"/>
+							if view.AuthenticatedUser(ctx).LoggedIn && view.AuthenticatedUser(ctx).AvatarUrl != "" {
+								<img src={ view.AuthenticatedUser(ctx).AvatarUrl } class="size-8 object-cover rounded-radius" alt="avatar" aria-hidden="true"/>
+							} else {
+								<img src={ "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png" } class="size-8 object-cover rounded-radius" alt="avatar" aria-hidden="true"/>
+							}
 							<div class="hidden md:flex flex-col">
-								<span class="text-sm font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Alex Martinez</span>
+								<span class="text-sm font-bold text-on-surface-strong dark:text-on-surface-dark-strong">{ fmt.Sprintf("%s %s", view.AuthenticatedUser(ctx).FirstName, view.AuthenticatedUser(ctx).LastName) }</span>
 								<span class="text-xs" aria-hidden="true">
-									{ "@alexmartinez" }
+									{ view.AuthenticatedUser(ctx).Email }
 								</span>
 								<span class="sr-only">profile settings</span>
 							</div>

@@ -75,6 +75,7 @@ func (h *Handler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			slog.Error("Error creating user in database", "error", err)
+			http.Error(w, "Failed to create credentials", http.StatusInternalServerError)
 			return
 		}
 

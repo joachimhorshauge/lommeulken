@@ -2,13 +2,16 @@ package middleware
 
 import (
 	"context"
+	"log/slog"
 	"lommeulken/internal/supabase"
 	"lommeulken/types"
 	"net/http"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
-func WithUser(next http.Handler) http.Handler {
+func (m *Middleware) WithUser(next http.Handler) http.Handler {
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		if strings.Contains(r.URL.Path, "/public") {
 			next.ServeHTTP(w, r)
@@ -27,9 +30,23 @@ func WithUser(next http.Handler) http.Handler {
 			return
 		}
 
+		id, err := uuid.Parse(resp.ID)
+		if err != nil {
+			slog.Warn("Failed to parse uuid in middleware")
+		}
+
+		profile, err := m.queries.GetUserByID(context.Background(), id)
+		if err != nil {
+			slog.Error("Failed to get user with id", "ID", resp.ID)
+		}
+
 		user := types.AuthenticatedUser{
-			Email:    resp.Email,
-			LoggedIn: true,
+			ID:        resp.ID,
+			Email:     resp.Email,
+			LoggedIn:  true,
+			FirstName: profile.FirstName.String,
+			LastName:  profile.LastName.String,
+			AvatarUrl: profile.AvatarUrl.String,
 		}
 
 		ctx := context.WithValue(r.Context(), types.UserContextKey, user)
