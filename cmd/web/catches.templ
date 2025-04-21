@@ -1,5 +1,25 @@
 package web
 
+type CatchInfo struct {
+	Title       string
+	Description string
+	Date        string
+	Species     string
+	Length      string
+	Weight      string
+}
+
+type CatchErrors struct {
+	NoTitle       string
+	NoDescription string
+	InvalidLength string
+	InvalidDate   string
+	NoSpecies     string
+	FileTooLarge  string
+	WrongFileType string
+	NoImage       string
+}
+
 templ CatchesIndex() {
 	@Base() {
 		@Sidebar() {
@@ -15,41 +35,65 @@ templ CatchesIndex() {
 					</svg>
 				</div>
 				<div>
-					@Card()
+					// Cards
 				</div>
 			</div>
 		}
 	}
 }
 
-templ NewCatch() {
+templ NewCatch(catchInfo CatchInfo, catchErrors CatchErrors) {
 	@Base() {
 		@Sidebar() {
-			@NewCatchForm()
+			@NewCatchForm(catchInfo, catchErrors)
 		}
 	}
 }
 
-templ NewCatchForm() {
-	<div id="new-catch-form">
+templ NewCatchForm(catchInfo CatchInfo, errors CatchErrors) {
+	<div
+		id="new-catch-form"
+	>
 		<form
 			class="mt-8"
-			action="/catches/new"
-			method="POST"
-			enctype="multipart/form-data"
 			hx-post="/catches/new"
 			hx-target="this"
 			hx-swap="outerHTML"
+			enctype="multipart/form-data"
 		>
 			<div class="flex-col flex items-center justify-center m-4 h-full">
-				<h2 class="justify-center">Ny fangst </h2>
-				@DatePicker()
+				<h2 class="justify-center text-2xl font-bold mb-4">Ny fangst </h2>
+				@DatePicker(catchInfo.Date)
+				if errors.InvalidDate != "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.InvalidDate }</p>
+				}
 				@speciesPicker()
-				@lengthInput()
-				@weightInput()
-				@titleInput()
-				@descriptionInput()
-				@FileInputTest()
+				if errors.NoSpecies != "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.NoSpecies }</p>
+				}
+				@lengthInput(catchInfo.Length)
+				if errors.InvalidLength!= "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.InvalidLength }</p>
+				}
+				@weightInput(catchInfo.Weight)
+				@titleInput(catchInfo.Title)
+				if errors.NoTitle != "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.NoTitle }</p>
+				}
+				@descriptionInput(catchInfo.Description)
+				if errors.NoDescription != "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.NoDescription }</p>
+				}
+				@FileInput()
+				if errors.FileTooLarge != "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.FileTooLarge }</p>
+				}
+				if errors.WrongFileType!= "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.WrongFileType }</p>
+				}
+				if errors.NoImage != "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.NoImage }</p>
+				}
 				<div class="mt-2">
 					<button type="submit" class="whitespace-nowrap rounded-radius bg-primary border border-primary px-4 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark">Opret fangst</button>
 				</div>
@@ -59,25 +103,6 @@ templ NewCatchForm() {
 }
 
 templ FileInput() {
-	<div class="flex w-full max-w-xl text-center flex-col gap-1">
-		<span class="w-fit pl-0.5 text-sm text-on-surface dark:text-on-surface-dark">Billede</span>
-		<div class="flex w-full flex-col items-center justify-center gap-2 rounded-radius border border-dashed border-outline p-8 text-on-surface dark:border-outline-dark dark:text-on-surface-dark">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="w-12 h-12 opacity-75">
-				<path fill-rule="evenodd" d="M10.5 3.75a6 6 0 0 0-5.98 6.496A5.25 5.25 0 0 0 6.75 20.25H18a4.5 4.5 0 0 0 2.206-8.423 3.75 3.75 0 0 0-4.133-4.303A6.001 6.001 0 0 0 10.5 3.75Zm2.03 5.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06l1.72-1.72v4.94a.75.75 0 0 0 1.5 0v-4.94l1.72 1.72a.75.75 0 1 0 1.06-1.06l-3-3Z" clip-rule="evenodd"></path>
-			</svg>
-			<div class="group">
-				<label for="fileInputDragDrop" class="font-medium text-primary group-focus-within:underline dark:text-primary-dark">
-					<input id="fileInputDragDrop" type="file" class="sr-only" aria-describedby="validFileFormats"/>
-					Browse
-				</label>
-				or drag and drop here
-			</div>
-			<small id="validFileFormats">PNG, JPG, WebP - Max 5MB</small>
-		</div>
-	</div>
-}
-
-templ FileInputTest() {
 	<div x-data="{ previewUrl: null }" class="flex w-full max-w-xl text-center flex-col gap-1">
 		<span class="w-fit pl-0.5 text-sm text-on-surface dark:text-on-surface-dark">Billede</span>
 		<div
@@ -129,7 +154,7 @@ templ FileInputTest() {
 	</div>
 }
 
-templ DatePicker() {
+templ DatePicker(date string) {
 	<div class="flex w-full max-w-xs flex-col gap-1 text-on-surface dark:text-on-surface-dark">
 		<label for="dateInput" class="w-fit pl-0.5 text-sm">Dato for fangst</label>
 		<input
@@ -137,26 +162,34 @@ templ DatePicker() {
 			type="date"
 			class="w-full rounded-radius border border-outline bg-surface-alt px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
 			name="date"
+			value={ date }
 			placeholder="Dato for fangst"
 		/>
 	</div>
 }
 
-templ titleInput() {
+templ titleInput(title string) {
 	<div class="flex w-full max-w-xs flex-col gap-1 text-on-surface dark:text-on-surface-dark">
 		<label for="title" class="w-fit pl-0.5 text-sm">Overskrift</label>
-		<input id="title" type="text" class="w-full rounded-radius border border-outline bg-surface-alt px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark" name="title" placeholder="Overskrift"/>
+		<input
+			id="title"
+			type="text"
+			class="w-full rounded-radius border border-outline bg-surface-alt px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+			name="title"
+			placeholder="Overskrift"
+			value={ title }
+		/>
 	</div>
 }
 
-templ descriptionInput() {
+templ descriptionInput(description string) {
 	<div class="flex w-full max-w-md flex-col gap-1 text-on-surface dark:text-on-surface-dark">
 		<label for="textArea" class="w-fit pl-0.5 text-sm">Beretning</label>
-		<textarea id="textArea" class="w-full rounded-radius border border-outline bg-surface-alt px-2.5 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark" rows="3" placeholder="Beretning ..."></textarea>
+		<textarea name="description" id="description" class="w-full rounded-radius border border-outline bg-surface-alt px-2.5 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark" rows="3" placeholder="Beretning ...">{ description }</textarea>
 	</div>
 }
 
-templ lengthInput() {
+templ lengthInput(lenght string) {
 	<div x-data class="flex w-full max-w-xs flex-col gap-1 text-on-surface dark:text-on-surface-dark">
 		<label for="heightInput" class="w-fit pl-0.5 text-sm">Længde (cm)</label>
 		<input
@@ -168,6 +201,7 @@ templ lengthInput() {
 			placeholder="40"
 			inputmode="numeric"
 			pattern="[0-9]*"
+			value={ lenght }
 		/>
 	</div>
 }
@@ -311,7 +345,7 @@ templ speciesPicker() {
 		class="flex w-full max-w-xs flex-col gap-1"
 		x-on:keydown="handleKeydownOnOptions($event)"
 		x-on:keydown.esc.window="isOpen = false, openedWithKeyboard = false"
-		x-init="options = allOptions"
+		x-init="options = allOptions;"
 	>
 		<label for="make" class="w-fit pl-0.5 text-sm text-on-surface dark:text-on-surface-dark">Art</label>
 		<div class="relative">
@@ -324,7 +358,7 @@ templ speciesPicker() {
 				</svg>
 			</button>
 			<!-- Hidden Input To Grab The Selected Value  -->
-			<input id="make" name="make" x-ref="hiddenTextField" hidden=""/>
+			<input id="species" name="species" x-ref="hiddenTextField" hidden=""/>
 			<div x-show="isOpen || openedWithKeyboard" id="makesList" class="absolute left-0 top-11 z-10 w-full overflow-hidden rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt" role="listbox" aria-label="industries list" x-on:click.outside="isOpen = false, openedWithKeyboard = false" x-on:keydown.down.prevent="$focus.wrap().next()" x-on:keydown.up.prevent="$focus.wrap().previous()" x-transition x-trap="openedWithKeyboard">
 				<!-- Search  -->
 				<div class="relative">
@@ -356,9 +390,9 @@ templ speciesPicker() {
 	</div>
 }
 
-templ weightInput() {
+templ weightInput(weight string) {
 	<div x-data="{ weightInput: '' }" class="flex w-full max-w-xs flex-col gap-1 text-on-surface dark:text-on-surface-dark">
-		<label for="weightInput" class="w-fit pl-0.5 text-sm">Weight (kg)</label>
+		<label for="weightInput" class="w-fit pl-0.5 text-sm">Weight (kg)<span class="text-xs opacity-75 ml-2">(valgfri)</span></label>
 		<input
 			id="weightInput"
 			type="text"
@@ -398,6 +432,7 @@ templ weightInput() {
 			name="weight_kg"
 			placeholder="75.5"
 			inputmode="decimal"
+			value={ weight }
 		/>
 	</div>
 }

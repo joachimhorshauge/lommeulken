@@ -13,7 +13,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux := http.NewServeMux()
 
 	// Register routes
-	mux.Handle("/", templ.Handler(web.HelloForm()))
+	mux.HandleFunc("/", s.handler.HandleHomeIndex)
 
 	mux.HandleFunc("/health", s.healthHandler)
 

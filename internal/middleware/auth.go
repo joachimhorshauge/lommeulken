@@ -3,12 +3,14 @@ package middleware
 import (
 	"context"
 	"log/slog"
+	"lommeulken/gen/dbstore"
 	"lommeulken/internal/supabase"
 	"lommeulken/types"
 	"net/http"
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 func (m *Middleware) WithUser(next http.Handler) http.Handler {
@@ -37,11 +39,17 @@ func (m *Middleware) WithUser(next http.Handler) http.Handler {
 
 		profile, err := m.queries.GetUserByID(context.Background(), id)
 		if err != nil {
-			slog.Error("Failed to get user with id", "ID", resp.ID)
+			slog.Warn("Failed to get user with id", "ID", resp.ID)
+			_, err = m.queries.CreateUser(context.Background(), dbstore.CreateUserParams{ID: id, Email: pgtype.Text{String: resp.Email, Valid: true}})
+			if err != nil {
+				slog.Error("Failed to create user  in db with id", "ID", resp.ID)
+			}
+			slog.Info("Failed to create user  in db with id", "ID", resp.ID)
+
 		}
 
 		user := types.AuthenticatedUser{
-			ID:        resp.ID,
+			ID:        id,
 			Email:     resp.Email,
 			LoggedIn:  true,
 			FirstName: profile.FirstName.String,

@@ -17,7 +17,7 @@ import (
 	"lommeulken/internal/server"
 
 	"github.com/Backblaze/blazer/b2"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func gracefulShutdown(apiServer *http.Server, done chan bool) {
@@ -45,6 +45,7 @@ func gracefulShutdown(apiServer *http.Server, done chan bool) {
 }
 
 func main() {
+	slog.Info("Starting application setup...")
 	// Initialize Backblaze B2 client
 	b2Client, err := b2.NewClient(
 		context.Background(),
@@ -54,14 +55,16 @@ func main() {
 	if err != nil {
 		slog.Error("Failed to initialize B2 client", "Error", err)
 	}
+	slog.Info("Successfully connected to bucket")
 
 	ctx := context.Background()
 
-	conn, err := pgx.Connect(ctx, os.Getenv("GOOSE_DBSTRING"))
+	conn, err := pgxpool.New(ctx, os.Getenv("GOOSE_DBSTRING"))
 	if err != nil {
 		slog.Error("Failed to connect to database", "Error", err)
 	}
-	defer conn.Close(ctx)
+	defer conn.Close()
+	slog.Info("Successfully connected to database")
 
 	queries := dbstore.New(conn)
 
@@ -82,6 +85,7 @@ func main() {
 	// Run graceful shutdown in a separate goroutine
 	go gracefulShutdown(server, done)
 
+	slog.Info("Started server", "port", os.Getenv("PORT"))
 	err = server.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
 		panic(fmt.Sprintf("http server error: %s", err))

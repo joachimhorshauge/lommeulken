@@ -10,7 +10,6 @@ CREATE TABLE posts (
     length_cm INTEGER,
     weight_kg FLOAT,
     catch_date TIMESTAMP WITH TIME ZONE,
-    location TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

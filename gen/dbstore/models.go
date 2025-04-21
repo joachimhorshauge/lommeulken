@@ -19,7 +19,6 @@ type Post struct {
 	LengthCm    pgtype.Int4
 	WeightKg    pgtype.Float8
 	CatchDate   pgtype.Timestamptz
-	Location    pgtype.Text
 	CreatedAt   pgtype.Timestamptz
 	UpdatedAt   pgtype.Timestamptz
 }

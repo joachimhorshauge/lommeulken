@@ -2,7 +2,7 @@ package web
 
 import ()
 
-templ HelloForm() {
+templ HomeIndex(cards []CardInfo) {
 	@Base() {
 		@Sidebar() {
 			<div class="flex flex-col items-center">
@@ -17,10 +17,9 @@ templ HelloForm() {
 				<div class="w-full max-w-6xl px-4 py-8 flex justify-center">
 					<!-- Responsive grid container -->
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-						@Card()
-						@Card()
-						@Card()
-						@Card()
+						for _, card := range cards {
+							@Card(card)
+						}
 					</div>
 				</div>
 			</div>

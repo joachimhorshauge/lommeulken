@@ -1,5 +1,7 @@
 package types
 
+import "github.com/google/uuid"
+
 type ContextKey string
 
 var UserContextKey ContextKey = "user"
@@ -10,5 +12,5 @@ type AuthenticatedUser struct {
 	FirstName string
 	LastName  string
 	AvatarUrl string
-	ID        string
+	ID        uuid.UUID
 }
