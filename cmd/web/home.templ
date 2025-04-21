@@ -16,9 +16,7 @@ templ HomeIndex() {
 				<h2 class="mt-6 mb-6 text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Seneste fangster</h2>
 				<div class="w-full max-w-6xl px-4 py-8 flex justify-center">
 					<!-- Responsive grid container -->
-					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-						<div hx-get="/catches/cards" hx-trigger="load"></div>
-					</div>
+					<div hx-get="/catches/cards" hx-trigger="load"></div>
 				</div>
 			</div>
 		}
