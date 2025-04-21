@@ -4,16 +4,19 @@ import (
 	"context"
 	"log/slog"
 	"lommeulken/cmd/web"
+	"lommeulken/gen/dbstore"
 	"lommeulken/util"
 	"net/http"
 	"strings"
 
 	sb "lommeulken/internal/supabase"
 
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/nedpals/supabase-go"
 )
 
-func HandleSignup(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		err := web.SignupIndex().Render(r.Context(), w)
 		if err != nil {
@@ -26,19 +29,19 @@ func HandleSignup(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		credentials := web.UserSignupCredentials{
 			Email:           r.PostFormValue("email"),
-			Username:        r.PostFormValue("username"),
 			Password:        r.PostFormValue("password"),
 			ConfirmPassword: r.PostFormValue("confirmPassword"),
+			FirstName:       r.PostFormValue("firstName"),
+			LastName:        r.PostFormValue("lastName"),
 		}
 
 		errors := web.SignupErrors{
 			EmailInvalid:     util.ValidateEmail(credentials.Email),
-			UsernameInvalid:  util.ValidateUsername(credentials.Username),
 			PasswordInvalid:  util.ValidatePassword(credentials.Password),
 			PasswordMismatch: util.ValidatePasswordMatch(credentials.Password, credentials.ConfirmPassword),
 		}
 
-		if errors.EmailInvalid != "" || errors.UsernameInvalid != "" || errors.PasswordInvalid != "" || errors.PasswordMismatch != "" {
+		if errors.EmailInvalid != "" || errors.PasswordInvalid != "" || errors.PasswordMismatch != "" {
 			err := web.SignupForm(credentials, errors).Render(r.Context(), w)
 			if err != nil {
 				slog.Error("Error rendering Signup form with errors", "error", err)
@@ -48,13 +51,30 @@ func HandleSignup(w http.ResponseWriter, r *http.Request) {
 
 		ctx := context.Background()
 
-		_, err := sb.Client.Auth.SignUp(ctx, supabase.UserCredentials{
+		user, err := sb.Client.Auth.SignUp(ctx, supabase.UserCredentials{
 			Email:    credentials.Email,
 			Password: credentials.Password,
 		})
 
+		userId, err := uuid.Parse(user.ID)
+		slog.Info("", "Id", userId)
 		if err != nil {
-			slog.Error("Error creating credentials in Supabase", "error", err)
+			slog.Error("Error parsing UUID", "error", err)
+		}
+
+		params := dbstore.CreateUserParams{
+			ID:        userId,
+			Email:     ToPgText(user.Email),
+			FirstName: ToPgText(credentials.FirstName),
+			LastName:  ToPgText(credentials.LastName),
+			Address:   ToPgText(""),
+			AvatarUrl: ToPgText(""),
+			Bio:       ToPgText(""),
+		}
+		_, err = h.queries.CreateUser(ctx, params)
+
+		if err != nil {
+			slog.Error("Error creating user in database", "error", err)
 			http.Error(w, "Failed to create credentials", http.StatusInternalServerError)
 			return
 		}
@@ -64,7 +84,7 @@ func HandleSignup(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleLogin(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		err := web.LoginIndex().Render(r.Context(), w)
 		if err != nil {
@@ -114,7 +134,7 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleLogout(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleLogout(w http.ResponseWriter, r *http.Request) {
 	cookie := http.Cookie{
 		Value:    "",
 		Name:     "at",
@@ -125,4 +145,11 @@ func HandleLogout(w http.ResponseWriter, r *http.Request) {
 	}
 	http.SetCookie(w, &cookie)
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
+}
+
+func ToPgText(s string) pgtype.Text {
+	return pgtype.Text{
+		String: s,
+		Valid:  s != "",
+	}
 }

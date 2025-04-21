@@ -1,0 +1,438 @@
+package web
+
+type CatchInfo struct {
+	Title       string
+	Description string
+	Date        string
+	Species     string
+	Length      string
+	Weight      string
+}
+
+type CatchErrors struct {
+	NoTitle       string
+	NoDescription string
+	InvalidLength string
+	InvalidDate   string
+	NoSpecies     string
+	FileTooLarge  string
+	WrongFileType string
+	NoImage       string
+}
+
+templ CatchesIndex() {
+	@Base() {
+		@Sidebar() {
+			<div class="flex-col flex items-center justify-center">
+				<h2 class="justify-center">Fangster</h2>
+				<div class="flex flex-row justify-around w-full m-4">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 0 1-1.125-1.125v-3.75ZM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 0 1-1.125-1.125v-8.25ZM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 0 1-1.125-1.125v-2.25Z"></path>
+					</svg>
+					@ButtonLink("Ny fangst", "/catches/new")
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+						<path d="M18.75 12.75h1.5a.75.75 0 0 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5ZM12 6a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 12 6ZM12 18a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 12 18ZM3.75 6.75h1.5a.75.75 0 1 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5ZM5.25 18.75h-1.5a.75.75 0 0 1 0-1.5h1.5a.75.75 0 0 1 0 1.5ZM3 12a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 3 12ZM9 3.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM12.75 12a2.25 2.25 0 1 1 4.5 0 2.25 2.25 0 0 1-4.5 0ZM9 15.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z"></path>
+					</svg>
+				</div>
+				<div>
+					// Cards
+				</div>
+			</div>
+		}
+	}
+}
+
+templ NewCatch(catchInfo CatchInfo, catchErrors CatchErrors) {
+	@Base() {
+		@Sidebar() {
+			@NewCatchForm(catchInfo, catchErrors)
+		}
+	}
+}
+
+templ NewCatchForm(catchInfo CatchInfo, errors CatchErrors) {
+	<div
+		id="new-catch-form"
+	>
+		<form
+			class="mt-8"
+			hx-post="/catches/new"
+			hx-target="this"
+			hx-swap="outerHTML"
+			enctype="multipart/form-data"
+		>
+			<div class="flex-col flex items-center justify-center m-4 h-full">
+				<h2 class="justify-center text-2xl font-bold mb-4">Ny fangst </h2>
+				@DatePicker(catchInfo.Date)
+				if errors.InvalidDate != "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.InvalidDate }</p>
+				}
+				@speciesPicker()
+				if errors.NoSpecies != "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.NoSpecies }</p>
+				}
+				@lengthInput(catchInfo.Length)
+				if errors.InvalidLength!= "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.InvalidLength }</p>
+				}
+				@weightInput(catchInfo.Weight)
+				@titleInput(catchInfo.Title)
+				if errors.NoTitle != "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.NoTitle }</p>
+				}
+				@descriptionInput(catchInfo.Description)
+				if errors.NoDescription != "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.NoDescription }</p>
+				}
+				@FileInput()
+				if errors.FileTooLarge != "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.FileTooLarge }</p>
+				}
+				if errors.WrongFileType!= "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.WrongFileType }</p>
+				}
+				if errors.NoImage != "" {
+					<p class="text-red-500 text-sm mt-1">{ errors.NoImage }</p>
+				}
+				<div class="mt-2">
+					<button type="submit" class="whitespace-nowrap rounded-radius bg-primary border border-primary px-4 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark">Opret fangst</button>
+				</div>
+			</div>
+		</form>
+	</div>
+}
+
+templ FileInput() {
+	<div x-data="{ previewUrl: null }" class="flex w-full max-w-xl text-center flex-col gap-1">
+		<span class="w-fit pl-0.5 text-sm text-on-surface dark:text-on-surface-dark">Billede</span>
+		<div
+			class="flex w-full flex-col items-center justify-center gap-2 rounded-radius border border-dashed border-outline p-8 text-on-surface dark:border-outline-dark dark:text-on-surface-dark"
+			x-on:drop.prevent="
+                const file = $event.dataTransfer.files[0];
+                if (file && file.type.match('image.*')) {
+                    previewUrl = URL.createObjectURL(file);
+                }
+            "
+			x-on:dragover.prevent
+		>
+			<!-- Preview Image -->
+			<template x-if="previewUrl">
+				<img
+					:src="previewUrl"
+					alt="Preview"
+					class="max-h-48 max-w-full rounded-radius object-contain"
+				/>
+			</template>
+			<!-- Upload Icon (shown when no image) -->
+			<template x-if="!previewUrl">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="w-12 h-12 opacity-75">
+					<path fill-rule="evenodd" d="M10.5 3.75a6 6 0 0 0-5.98 6.496A5.25 5.25 0 0 0 6.75 20.25H18a4.5 4.5 0 0 0 2.206-8.423 3.75 3.75 0 0 0-4.133-4.303A6.001 6.001 0 0 0 10.5 3.75Zm2.03 5.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06l1.72-1.72v4.94a.75.75 0 0 0 1.5 0v-4.94l1.72 1.72a.75.75 0 1 0 1.06-1.06l-3-3Z" clip-rule="evenodd"></path>
+				</svg>
+			</template>
+			<div class="group">
+				<label for="fileInput" class="font-medium text-primary group-focus-within:underline dark:text-primary-dark">
+					<input
+						id="fileInput"
+						name="image"
+						type="file"
+						class="sr-only"
+						aria-describedby="validFileFormats"
+						x-on:change="
+                            const file = $event.target.files[0];
+                            if (file && file.type.match('image.*')) {
+                                previewUrl = URL.createObjectURL(file);
+                            }
+                        "
+						accept="image/png, image/jpeg, image/webp"
+					/>
+					Browse
+				</label>
+				or drag and drop here
+			</div>
+			<small id="validFileFormats">PNG, JPG, WebP - Max 5MB</small>
+		</div>
+	</div>
+}
+
+templ DatePicker(date string) {
+	<div class="flex w-full max-w-xs flex-col gap-1 text-on-surface dark:text-on-surface-dark">
+		<label for="dateInput" class="w-fit pl-0.5 text-sm">Dato for fangst</label>
+		<input
+			id="dateInput"
+			type="date"
+			class="w-full rounded-radius border border-outline bg-surface-alt px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+			name="date"
+			value={ date }
+			placeholder="Dato for fangst"
+		/>
+	</div>
+}
+
+templ titleInput(title string) {
+	<div class="flex w-full max-w-xs flex-col gap-1 text-on-surface dark:text-on-surface-dark">
+		<label for="title" class="w-fit pl-0.5 text-sm">Overskrift</label>
+		<input
+			id="title"
+			type="text"
+			class="w-full rounded-radius border border-outline bg-surface-alt px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+			name="title"
+			placeholder="Overskrift"
+			value={ title }
+		/>
+	</div>
+}
+
+templ descriptionInput(description string) {
+	<div class="flex w-full max-w-md flex-col gap-1 text-on-surface dark:text-on-surface-dark">
+		<label for="textArea" class="w-fit pl-0.5 text-sm">Beretning</label>
+		<textarea name="description" id="description" class="w-full rounded-radius border border-outline bg-surface-alt px-2.5 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark" rows="3" placeholder="Beretning ...">{ description }</textarea>
+	</div>
+}
+
+templ lengthInput(lenght string) {
+	<div x-data class="flex w-full max-w-xs flex-col gap-1 text-on-surface dark:text-on-surface-dark">
+		<label for="heightInput" class="w-fit pl-0.5 text-sm">Længde (cm)</label>
+		<input
+			id="length"
+			type="text"
+			class="w-full rounded-radius border border-outline bg-surface-alt px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+			x-mask="999"
+			name="length_cm"
+			placeholder="40"
+			inputmode="numeric"
+			pattern="[0-9]*"
+			value={ lenght }
+		/>
+	</div>
+}
+
+templ speciesPicker() {
+	<div
+		x-data="{
+        allOptions: [
+    { 
+        label: 'Aborre', 
+        value: 'Aborre' 
+    },
+    { 
+        label: 'Brasen',
+        value: 'Brasen' 
+    },
+    { 
+        label: 'Bækørred',
+        value: 'Bækørred' 
+    },
+    { 
+        label: 'Fladfisk', 
+        value: 'Fladfisk' 
+    },
+    { 
+        label: 'Gedde', 
+        value: 'Gedde' 
+    },
+    { 
+        label: 'Græskarpe', 
+        value: 'Græskarpe' 
+    },
+    { 
+        label: 'Havbars', 
+        value: 'Havbars' 
+    },
+    { 
+        label: 'Havørred Kysten', 
+        value: 'Havørred Kysten' 
+    },
+    { 
+        label: 'Havørred Åen', 
+        value: 'Havørred Åen' 
+    },
+    { 
+        label: 'Helt', 
+        value: 'Helt' 
+    },
+    { 
+        label: 'Hornfisk', 
+        value: 'Hornfisk' 
+    },
+    { 
+        label: 'Laks', 
+        value: 'Laks' 
+    },
+    { 
+        label: 'Makrel', 
+        value: 'Makrel' 
+    },
+    { 
+        label: 'Multe', 
+        value: 'Multe' 
+    },
+    { 
+        label: 'Pighvar/Slethvar', 
+        value: 'Pighvar/Slethvar' 
+    },
+    { 
+        label: 'Put & Take ørred', 
+        value: 'Put & Take ørred' 
+    },
+    { 
+        label: 'Rimte', 
+        value: 'Rimte' 
+    },
+    { 
+        label: 'Sandart', 
+        value: 'Sandart' 
+    },
+    { 
+        label: 'Skalle', 
+        value: 'Skalle' 
+    },
+    { 
+        label: 'Skælkarpe', 
+        value: 'Skælkarpe' 
+    },
+    { 
+        label: 'Spejlkarpe', 
+        value: 'Spejlkarpe' 
+    },
+    { 
+        label: 'Suder', 
+        value: 'Suder' 
+    },
+    { 
+        label: 'Søørred', 
+        value: 'Søørred' 
+    },
+    { 
+        label: 'Torsk', 
+        value: 'Torsk' 
+    },
+    { 
+        label: 'Uden for kategori', 
+        value: 'Uden for kategori' 
+    },
+    { 
+        label: 'Ulk', 
+        value: 'Ulk' 
+    }
+        ],
+        options: [],
+        isOpen: false,
+        openedWithKeyboard: false,
+        selectedOption: null,
+        setSelectedOption(option) {
+            this.selectedOption = option
+            this.isOpen = false
+            this.openedWithKeyboard = false
+            this.$refs.hiddenTextField.value = option.value
+        },
+        getFilteredOptions(query) {
+            this.options = this.allOptions.filter((option) =>
+                option.label.toLowerCase().includes(query.toLowerCase()),
+            )
+            if (this.options.length === 0) {
+                this.$refs.noResultsMessage.classList.remove('hidden')
+            } else {
+                this.$refs.noResultsMessage.classList.add('hidden')
+            }
+        },
+        handleKeydownOnOptions(event) {
+            // if the user presses backspace or the alpha-numeric keys, focus on the search field
+            if ((event.keyCode >= 65 && event.keyCode <= 90) || (event.keyCode >= 48 && event.keyCode <= 57) || event.keyCode === 8) {
+                this.$refs.searchField.focus()
+            }
+        },
+    }"
+		class="flex w-full max-w-xs flex-col gap-1"
+		x-on:keydown="handleKeydownOnOptions($event)"
+		x-on:keydown.esc.window="isOpen = false, openedWithKeyboard = false"
+		x-init="options = allOptions;"
+	>
+		<label for="make" class="w-fit pl-0.5 text-sm text-on-surface dark:text-on-surface-dark">Art</label>
+		<div class="relative">
+			<!-- trigger button  -->
+			<button type="button" class="inline-flex w-full items-center justify-between gap-2 border border-outline rounded-radius bg-surface-alt px-4 py-2 text-sm font-medium tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" role="combobox" aria-controls="makesList" aria-haspopup="listbox" x-on:click="isOpen = ! isOpen" x-on:keydown.down.prevent="openedWithKeyboard = true" x-on:keydown.enter.prevent="openedWithKeyboard = true" x-on:keydown.space.prevent="openedWithKeyboard = true" x-bind:aria-expanded="isOpen || openedWithKeyboard" x-bind:aria-label="selectedOption ? selectedOption.value : 'Please Select'">
+				<span class="text-sm font-normal" x-text="selectedOption ? selectedOption.value : 'Please Select'"></span>
+				<!-- Chevron  -->
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5" aria-hidden="true">
+					<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
+				</svg>
+			</button>
+			<!-- Hidden Input To Grab The Selected Value  -->
+			<input id="species" name="species" x-ref="hiddenTextField" hidden=""/>
+			<div x-show="isOpen || openedWithKeyboard" id="makesList" class="absolute left-0 top-11 z-10 w-full overflow-hidden rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt" role="listbox" aria-label="industries list" x-on:click.outside="isOpen = false, openedWithKeyboard = false" x-on:keydown.down.prevent="$focus.wrap().next()" x-on:keydown.up.prevent="$focus.wrap().previous()" x-transition x-trap="openedWithKeyboard">
+				<!-- Search  -->
+				<div class="relative">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5" class="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-on-surface/50 dark:text-on-surface-dark/50" aria-hidden="true">
+						<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
+					</svg>
+					<input type="text" class="w-full border-b border-outline bg-surface-alt py-2.5 pl-11 pr-4 text-sm text-on-surface focus:outline-hidden focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:border-primary-dark" name="searchField" aria-label="Search" x-on:input="getFilteredOptions($el.value)" x-ref="searchField" placeholder="Search"/>
+				</div>
+				<!-- Options  -->
+				<ul class="flex max-h-44 flex-col overflow-y-auto">
+					<li class="hidden px-4 py-2 text-sm text-on-surface dark:text-on-surface-dark" x-ref="noResultsMessage">
+						<span>No matches found</span>
+					</li>
+					<template x-for="(item, index) in options" x-bind:key="item.value">
+						<li class="combobox-option inline-flex justify-between gap-6 bg-surface-alt px-4 py-2 text-sm text-on-surface hover:bg-surface-dark-alt/5 hover:text-on-surface-strong focus-visible:bg-surface-dark-alt/5 focus-visible:text-on-surface-strong focus-visible:outline-hidden dark:bg-surface-dark-alt dark:text-on-surface-dark dark:hover:bg-surface-alt/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:bg-surface-alt/10 dark:focus-visible:text-on-surface-dark-strong" role="option" x-on:click="setSelectedOption(item)" x-on:keydown.enter="setSelectedOption(item)" x-bind:id="'option-' + index" tabindex="0">
+							<!-- Label  -->
+							<span x-bind:class="selectedOption == item ? 'font-bold' : null" x-text="item.label"></span>
+							<!-- Screen reader 'selected' indicator  -->
+							<span class="sr-only" x-text="selectedOption == item ? 'selected' : null"></span>
+							<!-- Checkmark  -->
+							<svg x-cloak x-show="selectedOption == item" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="size-4" aria-hidden="true">
+								<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"></path>
+							</svg>
+						</li>
+					</template>
+				</ul>
+			</div>
+		</div>
+	</div>
+}
+
+templ weightInput(weight string) {
+	<div x-data="{ weightInput: '' }" class="flex w-full max-w-xs flex-col gap-1 text-on-surface dark:text-on-surface-dark">
+		<label for="weightInput" class="w-fit pl-0.5 text-sm">Weight (kg)<span class="text-xs opacity-75 ml-2">(valgfri)</span></label>
+		<input
+			id="weightInput"
+			type="text"
+			x-model="weightInput"
+			x-on:input="
+            // Allow only numbers, comma or dot
+            weightInput = $event.target.value.replace(/[^0-9,.]/g, '');
+            // Prevent multiple decimal points
+            if ((weightInput.match(/[,.]/g) || []).length > 1) {
+                weightInput = weightInput.slice(0, -1);
+            }
+        "
+			x-on:blur="
+            if (!weightInput) return;
+            
+            // Replace comma with dot if exists
+            let num = weightInput.replace(',', '.');
+            
+            // Handle cases like '.9' → '0.9'
+            if (num.startsWith('.')) num = '0' + num;
+            
+            // Split into parts
+            let parts = num.split('.');
+            let whole = parts[0] || '0';
+            let decimal = parts[1] || '0';
+            
+            // Trim decimal to 1 digit
+            decimal = decimal.substring(0, 1);
+            
+            // Handle cases like '23.' → '23.0'
+            if (num.endsWith('.')) decimal = '0';
+            
+            // Reconstruct the number
+            weightInput = whole + '.' + decimal;
+        "
+			class="w-full rounded-radius border border-outline bg-surface-alt px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+			name="weight_kg"
+			placeholder="75.5"
+			inputmode="decimal"
+			value={ weight }
+		/>
+	</div>
+}

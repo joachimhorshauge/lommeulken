@@ -1,34 +1,66 @@
 package web
 
 import (
+	"fmt"
 	"lommeulken/cmd/view"
 )
 
 templ Sidebar() {
-	<div x-data="{ sidebarIsOpen: false }" class="relative flex w-full flex-col md:flex-row">
+	<div x-cloak x-data="{ sidebarIsOpen: false }" class="relative flex w-full flex-col md:flex-row">
 		<!-- This allows screen readers to skip the sidebar and go directly to the main content. -->
 		<a class="sr-only" href="#main-content">skip to the main content</a>
 		<!-- dark overlay for when the sidebar is open on smaller screens  -->
 		<div x-cloak x-show="sidebarIsOpen" class="fixed inset-0 z-20 bg-surface-dark/10 backdrop-blur-xs md:hidden" aria-hidden="true" x-on:click="sidebarIsOpen = false" x-transition.opacity></div>
 		<nav x-cloak class="fixed left-0 z-30 flex h-svh w-60 shrink-0 flex-col border-r border-outline bg-surface-alt p-4 transition-transform duration-300 md:w-64 md:translate-x-0 md:relative dark:border-outline-dark dark:bg-surface-dark-alt" x-bind:class="sidebarIsOpen ? 'translate-x-0' : '-translate-x-60'" aria-label="sidebar navigation">
 			<!-- sidebar links  -->
-			<div class="flex flex-col gap-2 overflow-y-auto pb-6">
-				<a href="#" class="flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm font-medium text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus-visible:underline focus:outline-hidden dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong">
-					<span>Bliv Medlem </span>
+			<div class="flex flex-col gap-2 overflow-y-auto pb-6" x-data="{ currentPath: window.location.pathname }">
+				<a
+					href="/"
+					class="flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm font-medium text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus-visible:underline focus:outline-hidden dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong"
+					:class="{ 'bg-primary/10 text-on-surface-strong dark:bg-primary-dark/10 dark:text-on-surface-dark-strong': currentPath === '/' }"
+				>
+					<span>Forside</span>
 				</a>
-				<a href="#" class="flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm font-medium text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus-visible:underline focus:outline-hidden dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong">
+				<a
+					href="/signup"
+					class="flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm font-medium text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus-visible:underline focus:outline-hidden dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong"
+					:class="{ 'bg-primary/10 text-on-surface-strong dark:bg-primary-dark/10 dark:text-on-surface-dark-strong': currentPath.startsWith('/signup') }"
+				>
+					<span>Bliv Medlem</span>
+				</a>
+				<a
+					href="/news"
+					class="flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm font-medium text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus-visible:underline focus:outline-hidden dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong"
+					:class="{ 'bg-primary/10 text-on-surface-strong dark:bg-primary-dark/10 dark:text-on-surface-dark-strong': currentPath.startsWith('/news') }"
+				>
 					<span>Nyheder</span>
 				</a>
-				<a href="#" class="flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm font-medium text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus-visible:underline focus:outline-hidden dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong">
+				<a
+					href="/calendar"
+					class="flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm font-medium text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus-visible:underline focus:outline-hidden dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong"
+					:class="{ 'bg-primary/10 text-on-surface-strong dark:bg-primary-dark/10 dark:text-on-surface-dark-strong': currentPath.startsWith('/calendar') }"
+				>
 					<span>Kalender</span>
 				</a>
-				<a href="#" class="flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm font-medium text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus-visible:underline focus:outline-hidden dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong">
+				<a
+					href="/catches"
+					class="flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm font-medium text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus-visible:underline focus:outline-hidden dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong"
+					:class="{ 'bg-primary/10 text-on-surface-strong dark:bg-primary-dark/10 dark:text-on-surface-dark-strong': currentPath.startsWith('/catches') }"
+				>
 					<span>Fangster</span>
 				</a>
-				<a href="#" class="flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm font-medium text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus-visible:underline focus:outline-hidden dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong">
+				<a
+					href="/competition"
+					class="flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm font-medium text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus-visible:underline focus:outline-hidden dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong"
+					:class="{ 'bg-primary/10 text-on-surface-strong dark:bg-primary-dark/10 dark:text-on-surface-dark-strong': currentPath.startsWith('/competition') }"
+				>
 					<span>Konkurrence</span>
 				</a>
-				<a href="#" class="flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm font-medium text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus-visible:underline focus:outline-hidden dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong">
+				<a
+					href="/about"
+					class="flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm font-medium text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus-visible:underline focus:outline-hidden dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong"
+					:class="{ 'bg-primary/10 text-on-surface-strong dark:bg-primary-dark/10 dark:text-on-surface-dark-strong': currentPath.startsWith('/about') }"
+				>
 					<span>Om os</span>
 				</a>
 			</div>
@@ -49,11 +81,15 @@ templ Sidebar() {
 					<!-- Profile Menu  -->
 					<div x-data="{ userDropdownIsOpen: false }" class="relative" x-on:keydown.esc.window="userDropdownIsOpen = false">
 						<button type="button" class="flex w-full items-center rounded-radius gap-2 p-2 text-left text-on-surface hover:bg-primary/5 hover:text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark" x-bind:class="userDropdownIsOpen ? 'bg-primary/10 dark:bg-primary-dark/10' : ''" aria-haspopup="true" x-on:click="userDropdownIsOpen = ! userDropdownIsOpen" x-bind:aria-expanded="userDropdownIsOpen">
-							<img src="https://penguinui.s3.amazonaws.com/component-assets/avatar-7.webp" class="size-8 object-cover rounded-radius" alt="avatar" aria-hidden="true"/>
+							if view.AuthenticatedUser(ctx).LoggedIn && view.AuthenticatedUser(ctx).AvatarUrl != "" {
+								<img src={ view.AuthenticatedUser(ctx).AvatarUrl } class="size-8 object-cover rounded-radius" alt="avatar" aria-hidden="true"/>
+							} else {
+								<img src={ "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png" } class="size-8 object-cover rounded-radius" alt="avatar" aria-hidden="true"/>
+							}
 							<div class="hidden md:flex flex-col">
-								<span class="text-sm font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Alex Martinez</span>
+								<span class="text-sm font-bold text-on-surface-strong dark:text-on-surface-dark-strong">{ fmt.Sprintf("%s %s", view.AuthenticatedUser(ctx).FirstName, view.AuthenticatedUser(ctx).LastName) }</span>
 								<span class="text-xs" aria-hidden="true">
-									{ "@alexmartinez" }
+									{ view.AuthenticatedUser(ctx).Email }
 								</span>
 								<span class="sr-only">profile settings</span>
 							</div>

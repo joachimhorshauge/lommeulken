@@ -17,11 +17,11 @@ services:
       BLUEPRINT_DB_PASSWORD: ${BLUEPRINT_DB_PASSWORD}
       BLUEPRINT_DB_SCHEMA: ${BLUEPRINT_DB_SCHEMA}
     depends_on:
-      psql_bp:
+      psql:
         condition: service_healthy
     networks:
       - blueprint
-  psql_bp:
+  psql:
     image: postgres:latest
     restart: unless-stopped
     environment:
