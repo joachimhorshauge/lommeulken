@@ -5,8 +5,6 @@ import (
 	"log"
 	"lommeulken/cmd/web"
 	"net/http"
-
-	"github.com/a-h/templ"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
@@ -22,8 +20,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.HandleFunc("/signup", s.handler.HandleSignup)
 	mux.HandleFunc("/login", s.handler.HandleLogin)
 	mux.HandleFunc("/logout", s.handler.HandleLogout)
-	mux.Handle("/catches", templ.Handler(web.CatchesIndex()))
+	mux.HandleFunc("/catches", s.handler.CatchIndexHandler)
 	mux.HandleFunc("/catches/new", s.handler.NewCatchHandler)
+	mux.HandleFunc("/catches/cards", s.handler.CatchCards)
 
 	// Wrap the mux with CORS middleware
 	return s.corsMiddleware(s.middleware.WithUser(mux))

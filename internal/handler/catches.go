@@ -20,7 +20,32 @@ func (h *Handler) CatchIndexHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
+	err := web.CatchesIndex().Render(r.Context(), w)
+	if err != nil {
+		slog.Error("failed to render Catches index form with errors", "error", err)
+	}
+	return
+}
 
+func (h *Handler) CatchCards(w http.ResponseWriter, r *http.Request) {
+
+	listPostsArgs := dbstore.ListPostsWithImagesParams{
+		Limit:  10,
+		Offset: 0,
+	}
+	posts, err := h.queries.ListPostsWithImages(context.Background(), listPostsArgs)
+	if err != nil {
+		slog.Error("Failed to get 10 latest posts", "msg", err)
+		posts = []dbstore.ListPostsWithImagesRow{}
+	}
+
+	cardInfoList := PostsToCardInfo(posts)
+
+	err = web.CatchCards(cardInfoList).Render(r.Context(), w)
+	if err != nil {
+		slog.Error("Error rendering Signup page", "error", err)
+		return
+	}
 }
 
 func (h *Handler) NewCatchHandler(w http.ResponseWriter, r *http.Request) {

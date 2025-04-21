@@ -2,7 +2,7 @@ package web
 
 import ()
 
-templ HomeIndex(cards []CardInfo) {
+templ HomeIndex() {
 	@Base() {
 		@Sidebar() {
 			<div class="flex flex-col items-center">
@@ -17,9 +17,7 @@ templ HomeIndex(cards []CardInfo) {
 				<div class="w-full max-w-6xl px-4 py-8 flex justify-center">
 					<!-- Responsive grid container -->
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-						for _, card := range cards {
-							@Card(card)
-						}
+						<div hx-get="/catches/cards" hx-trigger="load"></div>
 					</div>
 				</div>
 			</div>

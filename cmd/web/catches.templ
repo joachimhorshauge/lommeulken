@@ -35,11 +35,19 @@ templ CatchesIndex() {
 					</svg>
 				</div>
 				<div>
-					// Cards
+					<div hx-get="/catches/cards" hx-trigger="load"></div>
 				</div>
 			</div>
 		}
 	}
+}
+
+templ CatchCards(cards []CardInfo) {
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+		for _, card := range cards {
+			@Card(card)
+		}
+	</div>
 }
 
 templ NewCatch(catchInfo CatchInfo, catchErrors CatchErrors) {

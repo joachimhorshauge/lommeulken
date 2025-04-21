@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -16,29 +15,14 @@ func (h *Handler) HandleHomeIndex(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-
-	listPostsArgs := dbstore.ListPostsWithImagesParams{
-		Limit:  10,
-		Offset: 0,
-	}
-	posts, err := h.queries.ListPostsWithImages(context.Background(), listPostsArgs)
+	err := web.HomeIndex().Render(r.Context(), w)
 	if err != nil {
-		slog.Error("Failed to get 10 latest posts", "msg", err)
-		posts = []dbstore.ListPostsWithImagesRow{}
-	}
-
-	cardInfoList := postsToCardInfo(posts)
-
-	err = web.HomeIndex(cardInfoList).Render(r.Context(), w)
-	if err != nil {
-		slog.Error("Error rendering Signup page", "error", err)
-		return
+		slog.Error("failed to render HomeIndex form with errors", "error", err)
 	}
 	return
-
 }
 
-func postsToCardInfo(posts []dbstore.ListPostsWithImagesRow) []web.CardInfo {
+func PostsToCardInfo(posts []dbstore.ListPostsWithImagesRow) []web.CardInfo {
 	cards := []web.CardInfo{}
 
 	for _, post := range posts {
