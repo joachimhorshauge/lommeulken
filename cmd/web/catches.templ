@@ -82,8 +82,8 @@ templ FilterModal() {
         
         // Transform the data to match our format
         this.availableSpecies = data.map(species => ({
-          label: species.name,
-          value: species.name
+          label: species.label,
+          value: species.value
         }));
       } catch (error) {
         console.error('Error fetching species:', error);
