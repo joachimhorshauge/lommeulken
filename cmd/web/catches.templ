@@ -45,19 +45,16 @@ templ FilterModal() {
 	<div
 		x-data="{
     modalIsOpen: false,
+    loading: {
+      species: true,
+      users: true
+    },
     sortOption: null, // Single sort option
     filterOptions: {
       species: [],
       user: null
     },
-    availableSpecies: [
-      { label: 'Aborre', value: 'Aborre' },
-      { label: 'Brasen', value: 'Brasen' },
-      { label: 'Bækørred', value: 'Bækørred' },
-      { label: 'Gedde', value: 'Gedde' },
-      { label: 'Laks', value: 'Laks' },
-      // ... other fish species
-    ],
+    availableSpecies: [],
     availableSortOptions: [
       { value: 'off', label: 'Ingen sortering' },
       { value: 'length.asc', label: 'Længde (stigende)' },
@@ -67,21 +64,7 @@ templ FilterModal() {
       { value: 'dateCaught.asc', label: 'Dato fanget (ældste først)' },
       { value: 'dateCaught.desc', label: 'Dato fanget (nyeste først)' },
     ],
-    availableUsers: [
-      {
-        value: 'Aiden Walker',
-        label: 'Aiden Walker',
-        email: 'aiden.walker@example.com',
-        img: 'https://res.cloudinary.com/ds8pgw1pf/image/upload/penguinui/component-assets/avatars/avatar-1.webp',
-      },
-      {
-        value: 'Alex Martinez',
-        label: 'Alex Martinez',
-        email: 'alex.martinez@example.com',
-        img: 'https://res.cloudinary.com/ds8pgw1pf/image/upload/penguinui/component-assets/avatars/avatar-6.webp',
-      },
-      // ... other users
-    ],
+    availableUsers: [],
     updateSelectedUser(user) {
       this.filterOptions.user = user;
     },
@@ -90,6 +73,66 @@ templ FilterModal() {
     },
     updateSortOption(option) {
       this.sortOption = option;
+    },
+    async fetchSpecies() {
+      try {
+        this.loading.species = true;
+        const response = await fetch('/api/species');
+        const data = await response.json();
+        
+        // Transform the data to match our format
+        this.availableSpecies = data.map(species => ({
+          label: species.name,
+          value: species.name
+        }));
+      } catch (error) {
+        console.error('Error fetching species:', error);
+        // Fallback data in case of error
+        this.availableSpecies = [
+          { label: 'Aborre', value: 'Aborre' },
+          { label: 'Brasen', value: 'Brasen' },
+          { label: 'Gedde', value: 'Gedde' }
+        ];
+      } finally {
+        this.loading.species = false;
+      }
+    },
+    async fetchUsers() {
+      try {
+        this.loading.users = true;
+        const response = await fetch('/api/users');
+        const data = await response.json();
+        
+        // Transform the data to match our format
+        this.availableUsers = data.map(user => ({
+          value: user.value,
+          label: user.label,
+          id: user.id,
+          email: user.email,
+          img: user.avatar || 'https://res.cloudinary.com/ds8pgw1pf/image/upload/penguinui/component-assets/avatars/avatar-1.webp'
+        }));
+      } catch (error) {
+        console.error('Error fetching users:', error);
+        // Fallback data in case of error
+        this.availableUsers = [
+          {
+            id: 'user1',
+            value: 'Aiden Walker',
+            label: 'Aiden Walker',
+            email: 'aiden.walker@example.com',
+            img: 'https://res.cloudinary.com/ds8pgw1pf/image/upload/penguinui/component-assets/avatars/avatar-1.webp',
+          },
+          {
+            id: 'user2',
+            value: 'Alex Martinez',
+            label: 'Alex Martinez',
+            email: 'alex.martinez@example.com',
+            img: 'https://res.cloudinary.com/ds8pgw1pf/image/upload/penguinui/component-assets/avatars/avatar-6.webp',
+          }
+        ];
+      } finally {
+        this.loading.users = false;
+      }
     },
     applyFilters() {
       // Create URLSearchParams to properly format query parameters
@@ -107,7 +150,8 @@ templ FilterModal() {
       });
       
       if (this.filterOptions.user) {
-        params.append('filter.user', this.filterOptions.user.value);
+        // Use user ID for the query parameter
+        params.append('filter.user', this.filterOptions.user.id);
       }
       
       // Construct the URL with query parameters
@@ -135,6 +179,11 @@ templ FilterModal() {
       // Reset is handled through Alpine.js data binding
       
       this.applyFilters();
+    },
+    init() {
+      // Fetch data when component initializes
+      this.fetchSpecies();
+      this.fetchUsers();
     }
   }"
 	>
@@ -172,7 +221,7 @@ templ FilterModal() {
 				<!-- Dialog Header -->
 				<div class="flex items-center justify-between border-b border-outline bg-surface-alt/60 p-4 dark:border-outline-dark dark:bg-surface-dark/20">
 					<h3 id="filterModalTitle" class="font-semibold tracking-wide text-on-surface-strong dark:text-on-surface-dark-strong">Sortering og filtrering</h3>
-					<button x-on:click="modalIsOpen = false" aria-label="Lukk modal">
+					<button x-on:click="modalIsOpen = false" aria-label="Luk modal">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="1.4" class="w-5 h-5">
 							<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
 						</svg>
@@ -263,7 +312,7 @@ templ FilterModal() {
                 selectedOptions: [],
                 setLabelText() {
                   const count = this.selectedOptions.length;
-                  if (count === 0) return 'Please Select';
+                  if (count === 0) return 'Vælg arter';
                   return this.selectedOptions.join(', ');
                 },
                 highlightFirstMatchingOption(pressedKey) {
@@ -324,7 +373,14 @@ templ FilterModal() {
 											<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
 										</svg>
 									</button>
-									<ul x-cloak x-show="isOpen || openedWithKeyboard" id="fishList" class="absolute z-10 left-0 top-11 flex max-h-44 w-full flex-col overflow-hidden overflow-y-auto border-outline bg-surface-alt py-1.5 dark:border-outline-dark dark:bg-surface-dark-alt border rounded-radius" role="listbox" x-on:click.outside="isOpen = false, openedWithKeyboard = false" x-on:keydown.down.prevent="$focus.wrap().next()" x-on:keydown.up.prevent="$focus.wrap().previous()" x-transition x-trap="openedWithKeyboard">
+									<!-- Loading indicator for species -->
+									<div x-show="$data.loading.species" class="absolute z-10 left-0 top-11 flex w-full justify-center p-4 border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt rounded-radius">
+										<svg class="animate-spin h-5 w-5 text-primary dark:text-primary-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+											<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+											<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+										</svg>
+									</div>
+									<ul x-cloak x-show="(isOpen || openedWithKeyboard) && !$data.loading.species" id="fishList" class="absolute z-10 left-0 top-11 flex max-h-44 w-full flex-col overflow-hidden overflow-y-auto border-outline bg-surface-alt py-1.5 dark:border-outline-dark dark:bg-surface-dark-alt border rounded-radius" role="listbox" x-on:click.outside="isOpen = false, openedWithKeyboard = false" x-on:keydown.down.prevent="$focus.wrap().next()" x-on:keydown.up.prevent="$focus.wrap().previous()" x-transition x-trap="openedWithKeyboard">
 										<template x-for="(item, index) in $data.availableSpecies" :key="item.value">
 											<li role="option">
 												<label class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-on-surface hover:bg-surface-dark/5 has-focus:bg-surface-dark/5 dark:text-on-surface-dark dark:hover:bg-surface/5 dark:has-focus:bg-surface/5 has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75" x-bind:for="'fishOption' + index">
@@ -394,28 +450,35 @@ templ FilterModal() {
 								<label for="user" class="w-fit pl-0.5 text-sm text-on-surface dark:text-on-surface-dark">Fisk fanget af</label>
 								<div class="relative">
 									<!-- trigger button  -->
-									<button type="button" role="combobox" class="inline-flex w-full items-center justify-between gap-2 whitespace-nowrap border-outline bg-surface-alt px-4 py-2 text-sm font-medium capitalize tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark rounded-radius border" aria-haspopup="listbox" aria-controls="usersList" x-on:click="isOpen = !isOpen" x-on:keydown.down.prevent="openedWithKeyboard = true" x-on:keydown.enter.prevent="openedWithKeyboard = true" x-on:keydown.space.prevent="openedWithKeyboard = true" x-bind:aria-label="selectedOption ? selectedOption.value : 'Please Select'" x-bind:aria-expanded="isOpen || openedWithKeyboard">
-										<span class="text-sm font-normal" x-text="selectedOption ? selectedOption.value : 'Please Select'"></span>
+									<button type="button" role="combobox" class="inline-flex w-full items-center justify-between gap-2 whitespace-nowrap border-outline bg-surface-alt px-4 py-2 text-sm font-medium capitalize tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark rounded-radius border" aria-haspopup="listbox" aria-controls="usersList" x-on:click="isOpen = !isOpen" x-on:keydown.down.prevent="openedWithKeyboard = true" x-on:keydown.enter.prevent="openedWithKeyboard = true" x-on:keydown.space.prevent="openedWithKeyboard = true" x-bind:aria-label="selectedOption ? selectedOption.value : 'Vælg bruger'" x-bind:aria-expanded="isOpen || openedWithKeyboard">
+										<span class="text-sm font-normal" x-text="selectedOption ? selectedOption.value : 'Vælg bruger'"></span>
 										<!-- Chevron -->
 										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
 											<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
 										</svg>
 									</button>
-									<ul x-cloak x-show="isOpen || openedWithKeyboard" id="usersList" class="absolute z-10 left-0 top-11 flex max-h-44 w-full flex-col overflow-hidden overflow-y-auto border-outline bg-surface-alt py-1.5 dark:border-outline-dark dark:bg-surface-dark-alt rounded-radius border" role="listbox" aria-label="users list" x-on:click.outside="isOpen = false, openedWithKeyboard = false" x-on:keydown.down.prevent="$focus.wrap().next()" x-on:keydown.up.prevent="$focus.wrap().previous()" x-transition x-trap="openedWithKeyboard">
-										<template x-for="(item, index) in $data.availableUsers" :key="item.value">
+									<!-- Loading indicator for users -->
+									<div x-show="$data.loading.users" class="absolute z-10 left-0 top-11 flex w-full justify-center p-4 border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt rounded-radius">
+										<svg class="animate-spin h-5 w-5 text-primary dark:text-primary-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+											<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+											<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+										</svg>
+									</div>
+									<ul x-cloak x-show="(isOpen || openedWithKeyboard) && !$data.loading.users" id="usersList" class="absolute z-10 left-0 top-11 flex max-h-44 w-full flex-col overflow-hidden overflow-y-auto border-outline bg-surface-alt py-1.5 dark:border-outline-dark dark:bg-surface-dark-alt rounded-radius border" role="listbox" aria-label="users list" x-on:click.outside="isOpen = false, openedWithKeyboard = false" x-on:keydown.down.prevent="$focus.wrap().next()" x-on:keydown.up.prevent="$focus.wrap().previous()" x-transition x-trap="openedWithKeyboard">
+										<template x-for="(item, index) in $data.availableUsers" :key="item.id">
 											<li class="user-option inline-flex justify-between items-center gap-6 bg-surface-alt px-4 py-2 text-sm text-on-surface hover:bg-surface-dark-alt/5 hover:text-on-surface-strong focus-visible:bg-surface-dark-alt/5 focus-visible:text-on-surface-strong focus-visible:outline-hidden dark:bg-surface-dark-alt dark:text-on-surface-dark dark:hover:bg-surface-alt/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:bg-surface-alt/10 dark:focus-visible:text-on-surface-dark-strong" role="option" x-on:click="setSelectedOption(item)" x-on:keydown.enter="setSelectedOption(item)" x-bind:id="'userOption' + index" tabindex="0">
 												<div class="flex items-center gap-2">
 													<img class="size-8 rounded-full" x-bind:src="item.img" alt="" aria-hidden="true"/>
 													<!-- Label -->
 													<div class="flex flex-col">
-														<span x-bind:class="selectedOption && selectedOption.value === item.value ? 'font-bold' : null" x-text="item.label"></span>
+														<span x-bind:class="selectedOption && selectedOption.id === item.id ? 'font-bold' : null" x-text="item.label"></span>
 														<span class="text-xs" x-text="item.email"></span>
 														<!-- Screen reader 'selected' indicator  -->
-														<span class="sr-only" x-text="selectedOption && selectedOption.value === item.value ? 'selected' : null"></span>
+														<span class="sr-only" x-text="selectedOption && selectedOption.id === item.id ? 'selected' : null"></span>
 													</div>
 												</div>
 												<!-- Checkmark  -->
-												<svg x-cloak x-show="selectedOption && selectedOption.value === item.value" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="size-4" aria-hidden="true">
+												<svg x-cloak x-show="selectedOption && selectedOption.id === item.id" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="size-4" aria-hidden="true">
 													<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"></path>
 												</svg>
 											</li>
@@ -425,119 +488,34 @@ templ FilterModal() {
 							</div>
 						</div>
 					</div>
-				</div>
-				<!-- Dialog Footer -->
-				<div class="flex flex-col-reverse justify-between gap-2 border-t border-outline bg-surface-alt/60 p-4 dark:border-outline-dark dark:bg-surface-dark/20 sm:flex-row sm:items-center">
-					<button
-						x-on:click="resetFilters()"
-						type="button"
-						class="whitespace-nowrap rounded-radius px-4 py-2 text-center text-sm font-medium tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark"
-					>
-						Nulstil
-					</button>
-					<div class="flex gap-2">
+					<!-- Dialog Footer -->
+					<div class="flex flex-col-reverse justify-between gap-2 border-t border-outline bg-surface-alt/60 p-4 dark:border-outline-dark dark:bg-surface-dark/20 sm:flex-row sm:items-center">
 						<button
-							x-on:click="modalIsOpen = false"
+							x-on:click="resetFilters()"
 							type="button"
 							class="whitespace-nowrap rounded-radius px-4 py-2 text-center text-sm font-medium tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark"
 						>
-							Afbryd
+							Nulstil
 						</button>
-						<button
-							x-on:click="applyFilters()"
-							type="button"
-							class="whitespace-nowrap rounded-radius bg-primary border border-primary dark:border-primary-dark px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark"
-						>
-							Brug filter
-						</button>
+						<div class="flex gap-2">
+							<button
+								x-on:click="modalIsOpen = false"
+								type="button"
+								class="whitespace-nowrap rounded-radius px-4 py-2 text-center text-sm font-medium tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark"
+							>
+								Afbryd
+							</button>
+							<button
+								x-on:click="applyFilters()"
+								type="button"
+								class="whitespace-nowrap rounded-radius bg-primary border border-primary dark:border-primary-dark px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark"
+							>
+								Brug filter
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</div>
-}
-
-templ SortDropdown() {
-	<div
-		x-data="{
-        options: [
-            {
-                value: 'newest',
-                label: 'Nyeste fangster',
-            },
-            {
-                value: 'oldest',
-                label: 'Ældste fangster',
-            },
-            {
-                value: 'longest',
-                label: 'Længste fisk',
-            },
-            {
-                value: 'shortest',
-                label: 'Korteste fisk',
-            },
-            {
-                value: 'heaviest',
-                label: 'Tungeste fisk',
-            },
-            {
-                value: 'lightest',
-                label: 'Letteste fisk',
-            },
-        ],
-        isOpen: false,
-        openedWithKeyboard: false,
-        selectedOption: null,
-        setSelectedOption(option) {
-            this.selectedOption = option
-            this.isOpen = false
-            this.openedWithKeyboard = false
-            this.$refs.hiddenTextField.value = option.value
-        },
-        highlightFirstMatchingOption(pressedKey) {
-            const option = this.options.find((item) =>
-                item.label.toLowerCase().startsWith(pressedKey.toLowerCase()),
-            )
-            if (option) {
-                const index = this.options.indexOf(option)
-                const allOptions = document.querySelectorAll('.combobox-option')
-                if (allOptions[index]) {
-                    allOptions[index].focus()
-                }
-            }
-        },
-    }"
-		class="w-full max-w-xs flex flex-col gap-1"
-		x-on:keydown="highlightFirstMatchingOption($event.key)"
-		x-on:keydown.esc.window="isOpen = false, openedWithKeyboard = false"
-	>
-		<label for="industry" class="w-fit pl-0.5 text-sm text-on-surface dark:text-on-surface-dark">Industry</label>
-		<div class="relative">
-			<!-- trigger button  -->
-			<button type="button" role="combobox" class="inline-flex w-full items-center justify-between gap-2 whitespace-nowrap border-outline bg-surface-alt px-4 py-2 text-sm font-medium capitalize tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark rounded-radius border" aria-haspopup="listbox" aria-controls="industriesList" x-on:click="isOpen = ! isOpen" x-on:keydown.down.prevent="openedWithKeyboard = true" x-on:keydown.enter.prevent="openedWithKeyboard = true" x-on:keydown.space.prevent="openedWithKeyboard = true" x-bind:aria-label="selectedOption ? selectedOption.value : 'Please Select'" x-bind:aria-expanded="isOpen || openedWithKeyboard">
-				<span class="text-sm font-normal" x-text="selectedOption ? selectedOption.value : 'Please Select'"></span>
-				<!-- Chevron  -->
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
-					<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
-				</svg>
-			</button>
-			<!-- hidden input to grab the selected value  -->
-			<input id="industry" name="industry" type="text" x-ref="hiddenTextField" hidden/>
-			<ul x-cloak x-show="isOpen || openedWithKeyboard" id="industriesList" class="absolute z-10 left-0 top-11 flex max-h-44 w-full flex-col overflow-hidden overflow-y-auto border-outline bg-surface-alt py-1.5 dark:border-outline-dark dark:bg-surface-dark-alt rounded-radius border" role="listbox" aria-label="industries list" x-on:click.outside="isOpen = false, openedWithKeyboard = false" x-on:keydown.down.prevent="$focus.wrap().next()" x-on:keydown.up.prevent="$focus.wrap().previous()" x-transition x-trap="openedWithKeyboard">
-				<template x-for="(item, index) in options" x-bind:key="item.value">
-					<li class="combobox-option inline-flex justify-between gap-6 bg-surface-alt px-4 py-2 text-sm text-on-surface hover:bg-surface-dark-alt/5 hover:text-on-surface-strong focus-visible:bg-surface-dark-alt/5 focus-visible:text-on-surface-strong focus-visible:outline-hidden dark:bg-surface-dark-alt dark:text-on-surface-dark dark:hover:bg-surface-alt/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:bg-surface-alt/10 dark:focus-visible:text-on-surface-dark-strong" role="option" x-on:click="setSelectedOption(item)" x-on:keydown.enter="setSelectedOption(item)" x-bind:id="'option-' + index" tabindex="0">
-						<!-- Label  -->
-						<span x-bind:class="selectedOption == item ? 'font-bold' : null" x-text="item.label"></span>
-						<!-- Screen reader 'selected' indicator  -->
-						<span class="sr-only" x-text="selectedOption == item ? 'selected' : null"></span>
-						<!-- Checkmark  -->
-						<svg x-cloak x-show="selectedOption == item" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="size-4" aria-hidden="true">
-							<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"></path>
-						</svg>
-					</li>
-				</template>
-			</ul>
 		</div>
 	</div>
 }

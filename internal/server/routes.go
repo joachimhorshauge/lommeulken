@@ -19,6 +19,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.HandleFunc("/catches", s.handler.CatchIndexHandler)
 	mux.HandleFunc("/catches/new", s.handler.NewCatchHandler)
 	mux.HandleFunc("/catches/cards", s.handler.CatchCards)
+	mux.HandleFunc("/api/users", s.handler.HandleListUsers)
 
 	// Wrap the mux with CORS middleware
 	return s.corsMiddleware(s.middleware.WithUser(mux))
