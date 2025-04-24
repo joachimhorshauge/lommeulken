@@ -23,7 +23,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.HandleFunc("/api/species", s.handler.HandleListSpecies)
 
 	// Wrap the mux with CORS middleware
-	return s.corsMiddleware(s.middleware.WithUser(mux))
+	return s.corsMiddleware(s.middleware.WithUser(s.middleware.WithLogging(mux)))
 }
 
 func (s *Server) corsMiddleware(next http.Handler) http.Handler {
