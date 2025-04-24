@@ -8,10 +8,12 @@ import (
 	"lommeulken/cmd/web"
 	"lommeulken/gen/dbstore"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -29,10 +31,39 @@ func (h *Handler) CatchIndexHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CatchCards(w http.ResponseWriter, r *http.Request) {
 
-	listPostsArgs := dbstore.ListPostsWithImagesParams{
-		Limit:  10,
-		Offset: 0,
+	filterByUserID := false
+	userID := uuid.New()
+	filterBySpecies := false
+	species := []string{}
+	offset := 0
+	limit := 10
+
+	// TODO: Get limit and offset from query params
+
+	requestUrl, _ := url.Parse(r.URL.String())
+	urlParams, _ := url.ParseQuery(requestUrl.RawQuery)
+
+	if urlParams["filter.user"] != nil {
+		filterByUserID = true
+		userID = uuid.MustParse(urlParams["filter.user"][0])
 	}
+
+	if urlParams["filter.species"] != nil {
+		filterBySpecies = true
+		species = urlParams["filter.species"]
+	}
+
+	slog.Info("req", "params", urlParams)
+
+	listPostsArgs := dbstore.ListPostsWithImagesParams{
+		FilterByUserID:  filterByUserID,
+		UserID:          userID,
+		FilterBySpecies: filterBySpecies,
+		Species:         species,
+		ResultOffset:    int32(offset),
+		ResultLimit:     int32(limit),
+	}
+
 	posts, err := h.queries.ListPostsWithImages(context.Background(), listPostsArgs)
 	if err != nil {
 		slog.Error("Failed to get 10 latest posts", "msg", err)

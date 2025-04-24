@@ -209,13 +209,23 @@ SELECT
         WHERE pi.post_id = p.id
     ) AS images
 FROM posts p
+WHERE 
+    ($1::boolean = FALSE OR p.user_id = $2)
+    AND (
+        $3::boolean = FALSE OR 
+        p.species = ANY($4::VARCHAR[])
+    )
 ORDER BY p.created_at DESC
-LIMIT $1 OFFSET $2
+LIMIT $6 OFFSET $5
 `
 
 type ListPostsWithImagesParams struct {
-	Limit  int32
-	Offset int32
+	FilterByUserID  bool
+	UserID          uuid.UUID
+	FilterBySpecies bool
+	Species         []string
+	ResultOffset    int32
+	ResultLimit     int32
 }
 
 type ListPostsWithImagesRow struct {
@@ -234,7 +244,14 @@ type ListPostsWithImagesRow struct {
 }
 
 func (q *Queries) ListPostsWithImages(ctx context.Context, arg ListPostsWithImagesParams) ([]ListPostsWithImagesRow, error) {
-	rows, err := q.db.Query(ctx, listPostsWithImages, arg.Limit, arg.Offset)
+	rows, err := q.db.Query(ctx, listPostsWithImages,
+		arg.FilterByUserID,
+		arg.UserID,
+		arg.FilterBySpecies,
+		arg.Species,
+		arg.ResultOffset,
+		arg.ResultLimit,
+	)
 	if err != nil {
 		return nil, err
 	}

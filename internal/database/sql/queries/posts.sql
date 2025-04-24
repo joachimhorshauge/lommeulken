@@ -36,8 +36,14 @@ SELECT
         WHERE pi.post_id = p.id
     ) AS images
 FROM posts p
+WHERE 
+    (sqlc.arg(filter_by_user_id)::boolean = FALSE OR p.user_id = sqlc.arg(user_id))
+    AND (
+        sqlc.arg(filter_by_species)::boolean = FALSE OR 
+        p.species = ANY(sqlc.arg(species)::VARCHAR[])
+    )
 ORDER BY p.created_at DESC
-LIMIT $1 OFFSET $2;
+LIMIT sqlc.arg(result_limit) OFFSET sqlc.arg(result_offset);
 
 -- name: ListPostsByUserWithImages :many
 SELECT 
