@@ -215,8 +215,15 @@ WHERE
         $3::boolean = FALSE OR 
         p.species = ANY($4::VARCHAR[])
     )
-ORDER BY p.created_at DESC
-LIMIT $6 OFFSET $5
+ORDER BY
+    CASE WHEN $5::text = 'created_at' AND $6::text = 'asc' THEN p.created_at ELSE NULL END ASC NULLS LAST,
+    CASE WHEN $5::text = 'created_at' AND $6::text = 'desc' THEN p.created_at ELSE NULL END DESC NULLS LAST,
+    CASE WHEN $5::text = 'length_cm' AND $6::text = 'asc' THEN p.length_cm ELSE NULL END ASC NULLS LAST,
+    CASE WHEN $5::text = 'length_cm' AND $6::text = 'desc' THEN p.length_cm ELSE NULL END DESC NULLS LAST,
+    CASE WHEN $5::text = 'weight_kg' AND $6::text = 'asc' THEN p.weight_kg ELSE NULL END ASC NULLS LAST,
+    CASE WHEN $5::text = 'weight_kg' AND $6::text = 'desc' THEN p.weight_kg ELSE NULL END DESC NULLS LAST,
+    p.created_at DESC 
+LIMIT $8 OFFSET $7
 `
 
 type ListPostsWithImagesParams struct {
@@ -224,6 +231,8 @@ type ListPostsWithImagesParams struct {
 	UserID          uuid.UUID
 	FilterBySpecies bool
 	Species         []string
+	SortColumn      string
+	SortDirection   string
 	ResultOffset    int32
 	ResultLimit     int32
 }
@@ -249,6 +258,8 @@ func (q *Queries) ListPostsWithImages(ctx context.Context, arg ListPostsWithImag
 		arg.UserID,
 		arg.FilterBySpecies,
 		arg.Species,
+		arg.SortColumn,
+		arg.SortDirection,
 		arg.ResultOffset,
 		arg.ResultLimit,
 	)

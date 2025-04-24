@@ -35,6 +35,8 @@ func (h *Handler) CatchCards(w http.ResponseWriter, r *http.Request) {
 	userID := uuid.New()
 	filterBySpecies := false
 	species := []string{}
+	sortColumn := "created_at"
+	sortDirection := "DESC"
 	offset := 0
 	limit := 10
 
@@ -53,7 +55,20 @@ func (h *Handler) CatchCards(w http.ResponseWriter, r *http.Request) {
 		species = urlParams["filter.species"]
 	}
 
-	slog.Info("req", "params", urlParams)
+	if urlParams["sort.length"] != nil {
+		sortColumn = "length_cm"
+		sortDirection = urlParams["sort.length"][0]
+	}
+
+	if urlParams["sort.weight"] != nil {
+		sortColumn = "weight_kg"
+		sortDirection = urlParams["sort.weight"][0]
+	}
+
+	if urlParams["sort.dateCaught"] != nil {
+		sortColumn = "created_at"
+		sortDirection = urlParams["sort.dateCaught"][0]
+	}
 
 	listPostsArgs := dbstore.ListPostsWithImagesParams{
 		FilterByUserID:  filterByUserID,
@@ -62,6 +77,8 @@ func (h *Handler) CatchCards(w http.ResponseWriter, r *http.Request) {
 		Species:         species,
 		ResultOffset:    int32(offset),
 		ResultLimit:     int32(limit),
+		SortColumn:      sortColumn,
+		SortDirection:   sortDirection,
 	}
 
 	posts, err := h.queries.ListPostsWithImages(context.Background(), listPostsArgs)

@@ -42,7 +42,14 @@ WHERE
         sqlc.arg(filter_by_species)::boolean = FALSE OR 
         p.species = ANY(sqlc.arg(species)::VARCHAR[])
     )
-ORDER BY p.created_at DESC
+ORDER BY
+    CASE WHEN sqlc.arg(sort_column)::text = 'created_at' AND sqlc.arg(sort_direction)::text = 'asc' THEN p.created_at ELSE NULL END ASC NULLS LAST,
+    CASE WHEN sqlc.arg(sort_column)::text = 'created_at' AND sqlc.arg(sort_direction)::text = 'desc' THEN p.created_at ELSE NULL END DESC NULLS LAST,
+    CASE WHEN sqlc.arg(sort_column)::text = 'length_cm' AND sqlc.arg(sort_direction)::text = 'asc' THEN p.length_cm ELSE NULL END ASC NULLS LAST,
+    CASE WHEN sqlc.arg(sort_column)::text = 'length_cm' AND sqlc.arg(sort_direction)::text = 'desc' THEN p.length_cm ELSE NULL END DESC NULLS LAST,
+    CASE WHEN sqlc.arg(sort_column)::text = 'weight_kg' AND sqlc.arg(sort_direction)::text = 'asc' THEN p.weight_kg ELSE NULL END ASC NULLS LAST,
+    CASE WHEN sqlc.arg(sort_column)::text = 'weight_kg' AND sqlc.arg(sort_direction)::text = 'desc' THEN p.weight_kg ELSE NULL END DESC NULLS LAST,
+    p.created_at DESC 
 LIMIT sqlc.arg(result_limit) OFFSET sqlc.arg(result_offset);
 
 -- name: ListPostsByUserWithImages :many
