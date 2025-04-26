@@ -1,5 +1,5 @@
 FROM golang:1.24-alpine AS build
-RUN apk add --no-cache curl
+RUN apk add --no-cache curl build-base
 
 WORKDIR /app
 
@@ -9,8 +9,9 @@ RUN go mod download
 COPY . .
 RUN go install github.com/a-h/templ/cmd/templ@latest && \
     templ generate && \
-    curl -sL https://github.com/tailwindlabs/tailwindcss/releases/download/v4.1.0/tailwindcss-linux-x64-musl -o tailwindcss && \
+    curl -sL https://github.com/tailwindlabs/tailwindcss/releases/download/v4.1.0/tailwindcss-linux-x64 -o tailwindcss && \
     chmod +x tailwindcss && \
+    apk add --no-cache libc6-compat && \
     ./tailwindcss -i cmd/web/styles/input.css -o cmd/web/assets/css/output.css
 
 RUN go build -o main cmd/api/main.go
@@ -18,7 +19,6 @@ RUN go build -o main cmd/api/main.go
 FROM alpine:3.20.1 AS prod
 WORKDIR /app
 COPY --from=build /app/main /app/main
+COPY --from=build /app/cmd/web/assets/css/output.css /app/cmd/web/assets/css/output.css
 EXPOSE ${PORT}
 CMD ["./main"]
-
-
