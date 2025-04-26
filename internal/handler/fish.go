@@ -86,6 +86,13 @@ func (h *Handler) HandleCatchPageIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user, err := h.queries.GetUserByID(ctx, data.UserID)
+	if err != nil {
+		slog.ErrorContext(ctx, "Failed to fetch user", "error", err, "id", data.UserID)
+		http.Error(w, "Failed to fetch user data", http.StatusInternalServerError)
+		return
+	}
+
 	// Parse images JSON
 	var images []ImageData
 	if err := json.Unmarshal(data.Images, &images); err != nil {
@@ -120,6 +127,7 @@ func (h *Handler) HandleCatchPageIndex(w http.ResponseWriter, r *http.Request) {
 		Length:      formatLength(data.LengthCm),
 		Weight:      formatWeight(data.WeightKg),
 		Image:       displayImage,
+		User:        fmt.Sprintf("%s %s", user.FirstName.String, user.LastName.String),
 	}
 
 	// Render page
