@@ -145,7 +145,7 @@ func formatLength(length pgtype.Int4) string {
 }
 
 func formatWeight(weight pgtype.Float8) string {
-	if !weight.Valid {
+	if !weight.Valid && float64(weight.Float64) == 0 {
 		return "N/A"
 	}
 	return fmt.Sprintf("%.1f kg", weight.Float64)

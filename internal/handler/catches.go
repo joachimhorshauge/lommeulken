@@ -200,7 +200,7 @@ func (h *Handler) NewCatchHandler(w http.ResponseWriter, r *http.Request) {
 				Description: pgtype.Text{String: description, Valid: true},
 				Species:     species,
 				LengthCm:    pgtype.Int4{Int32: int32(length), Valid: true},
-				WeightKg:    pgtype.Float8{Float64: weight, Valid: true},
+				WeightKg:    pgtype.Float8{Float64: weight, Valid: weight != 0.0},
 				CatchDate:   pgtype.Timestamptz{Time: parsedDate, Valid: true}}
 
 			post, err := h.queries.CreatePost(context.Background(), params)
