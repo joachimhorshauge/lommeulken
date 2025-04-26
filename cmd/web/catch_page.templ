@@ -1,0 +1,43 @@
+package web
+
+import "fmt"
+
+type CatchData struct {
+	Title       string
+	Description string
+	Species     string
+	Length      string
+	Weight      string
+	Image       string
+	User        string
+}
+
+templ CatchPageIndex(data CatchData) {
+	@Base() {
+		@Sidebar() {
+			<div class="md:flex">
+				<div class="w-full px-4 md:w-3/5 max-h-1/2">
+					<img class="w-full max-w-full h-auto object-cover rounded-2xl" src={ data.Image } alt="catch image"/>
+				</div>
+				<div class="p-4 md:w-2/5">
+					<h2>{ data.Title }</h2>
+					<div>
+						<p>
+							{ data.Description }
+						</p>
+						<div>
+							<span>{ data.Length }</span>
+							if data.Weight != "" {
+								<span>{ data.Weight }</span>
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+			<span>{ fmt.Sprintf("caught by: %s", data.User) }</span>
+			<div class="p-4">
+				Kommentarer
+			</div>
+		}
+	}
+}

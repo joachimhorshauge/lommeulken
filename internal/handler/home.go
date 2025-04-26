@@ -54,6 +54,7 @@ func PostsToCardInfo(posts []dbstore.ListPostsWithImagesRow) []web.CardInfo {
 			Length:   fmt.Sprintf("%d cm", post.LengthCm.Int32),
 			Weight:   fmt.Sprintf("%.2f kg", post.WeightKg.Float64),
 			Title:    post.Title,
+			PostUrl:  fmt.Sprintf("/catch/%s", post.ID.String()),
 		})
 	}
 
