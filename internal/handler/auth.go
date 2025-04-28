@@ -55,11 +55,15 @@ func (h *Handler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 			Email:    credentials.Email,
 			Password: credentials.Password,
 		})
-
-		userId, err := uuid.Parse(user.ID)
-		slog.Info("", "Id", userId)
 		if err != nil {
-			slog.Error("Error parsing UUID", "error", err)
+			slog.Error("Failed to signup user", "Error", err)
+		}
+		userId, err := uuid.Parse(user.ID)
+		if err != nil {
+			slog.ErrorContext(r.Context(), "Failed to parse UUID",
+				"error", err,
+				"userID", user.ID,
+				"path", r.URL.Path)
 		}
 
 		params := dbstore.CreateUserParams{

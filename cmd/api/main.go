@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -46,6 +47,7 @@ func gracefulShutdown(apiServer *http.Server, done chan bool) {
 
 func main() {
 	slog.Info("Starting application setup...")
+
 	// Initialize Backblaze B2 client
 	b2Client, err := b2.NewClient(
 		context.Background(),
@@ -54,19 +56,65 @@ func main() {
 	)
 	if err != nil {
 		slog.Error("Failed to initialize B2 client", "Error", err)
+		os.Exit(1)
 	}
 	slog.Info("Successfully connected to bucket")
 
-	ctx := context.Background()
+	connStr := fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		os.Getenv("BLUEPRINT_DB_HOST"),
+		5432,
+		os.Getenv("BLUEPRINT_DB_USERNAME"),
+		os.Getenv("BLUEPRINT_DB_PASSWORD"),
+		os.Getenv("BLUEPRINT_DB_DATABASE"),
+	)
 
-	conn, err := pgxpool.New(ctx, os.Getenv("GOOSE_DBSTRING"))
+	// Parse the complete configuration
+	dbConfig, err := pgxpool.ParseConfig(connStr)
 	if err != nil {
-		slog.Error("Failed to connect to database", "Error", err)
+		slog.Error("Failed to parse database config",
+			"error", err,
+			"connectionString", connStr)
+		os.Exit(1)
 	}
-	defer conn.Close()
+
+	// TCP settings
+	dbConfig.ConnConfig.DialFunc = (&net.Dialer{
+		Timeout:   30 * time.Second,
+		KeepAlive: 5 * time.Minute,
+	}).DialContext
+
+	// Connection with retries
+	var pool *pgxpool.Pool
+	maxAttempts := 5
+	for i := range maxAttempts {
+		pool, err = pgxpool.NewWithConfig(context.Background(), dbConfig)
+		if err == nil {
+			// Verify connection
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			err = pool.Ping(ctx)
+			if err == nil {
+				break
+			}
+		}
+
+		if i < maxAttempts-1 {
+			slog.Warn("Database connection failed, retrying...",
+				"attempt", i+1,
+				"error", err,
+				"connectionDetails", fmt.Sprintf("%s@%s:%d/%s",
+					dbConfig.ConnConfig.User,
+					dbConfig.ConnConfig.Host,
+					dbConfig.ConnConfig.Port,
+					dbConfig.ConnConfig.Database))
+			time.Sleep(time.Duration(i+1) * time.Second)
+		}
+	}
+	defer pool.Close()
 	slog.Info("Successfully connected to database")
 
-	queries := dbstore.New(conn)
+	queries := dbstore.New(pool)
 
 	handler := handler.NewHandler(
 		b2Client,
@@ -76,22 +124,18 @@ func main() {
 	)
 
 	middleware := middleware.NewMiddleware(queries)
-
 	server := server.NewServer(handler, middleware)
 
-	// Create a done channel to signal when the shutdown is complete
 	done := make(chan bool, 1)
-
-	// Run graceful shutdown in a separate goroutine
 	go gracefulShutdown(server, done)
 
 	slog.Info("Started server", "port", os.Getenv("PORT"))
 	err = server.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
-		panic(fmt.Sprintf("http server error: %s", err))
+		slog.Error("Server error", "Error", err)
+		os.Exit(1)
 	}
 
-	// Wait for the graceful shutdown to complete
 	<-done
 	log.Println("Graceful shutdown complete.")
 }

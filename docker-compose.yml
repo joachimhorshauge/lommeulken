@@ -16,6 +16,14 @@ services:
       BLUEPRINT_DB_USERNAME: ${BLUEPRINT_DB_USERNAME}
       BLUEPRINT_DB_PASSWORD: ${BLUEPRINT_DB_PASSWORD}
       BLUEPRINT_DB_SCHEMA: ${BLUEPRINT_DB_SCHEMA}
+      SUPABASE_HOST: ${SUPABASE_HOST}
+      SUPABASE_SECRET: ${SUPABASE_SECRET}
+      B2_ACCOUNT_ID: ${B2_ACCOUNT_ID}
+      B2_APPLICATION_KEY_ID: ${B2_APPLICATION_KEY_ID}
+      B2_APPLICATION_KEY_NAME: ${B2_APPLICATION_KEY_NAME}
+      B2_APPLICATION_KEY: ${B2_APPLICATION_KEY}
+      B2_BUCKET_NAME: ${B2_BUCKET_NAME}
+      B2_BASE_URL: ${B2_BASE_URL}
     depends_on:
       psql:
         condition: service_healthy
@@ -40,6 +48,19 @@ services:
       start_period: 15s
     networks:
       - blueprint
+  migrations:
+    image: kukymbr/goose-docker:3.24.2
+    environment:
+      - GOOSE_DRIVER=${GOOSE_DRIVER}
+      - GOOSE_DBSTRING=${GOOSE_DBSTRING}
+    volumes:
+      - ./internal/database/sql/migrations:/migrations
+    depends_on:
+      psql:
+        condition: service_healthy
+    networks:
+      - blueprint
+
 
 volumes:
   psql_volume_bp:
