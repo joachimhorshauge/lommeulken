@@ -82,7 +82,7 @@ jobs:
     - name: Docker Stack Deploy
       uses: cssnr/stack-deploy-action@v1
       with:
-        name: lommeulken
+        name: lommeulken-stack
         file: docker-stack.yaml
         host: joachimhorshauge.dk
         user: deploy
