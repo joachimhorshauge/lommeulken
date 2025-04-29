@@ -25,7 +25,10 @@ jobs:
 
       - name: Run templ generate
         shell: bash
-        run: templ generate -path .
+        run: templ generate -path . && go get github.com/a-h/templ && go get github.com/a-h/templ/runtime
+
+      - name: Build
+        run: go build -v ./...
 
       - name: Test with the Go CLI
         run: go test ./...
