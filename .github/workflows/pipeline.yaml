@@ -1,11 +1,23 @@
 name: pipeline
 on:
- push:
-   branches:
-     - "main"
+  push:
+    branches:
+      - "main"
 
 permissions:
   packages: write
+
+env:
+  PORT: ${{ secrets.PORT }}
+  B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+  B2_BASE_URL: ${{ secrets.B2_BASE_URL }}
+  BLUEPRINT_DB_HOST: ${{ secrets.BLUEPRINT_DB_HOST }}
+  BLUEPRINT_DB_PORT: ${{ secrets.BLUEPRINT_DB_PORT }}
+  BLUEPRINT_DB_USERNAME: ${{ secrets.BLUEPRINT_DB_USERNAME }}
+  BLUEPRINT_DB_DATABASE: ${{ secrets.BLUEPRINT_DB_DATABASE }}
+  BLUEPRINT_DB_SCHEMA: ${{ secrets.BLUEPRINT_DB_SCHEMA }}
+  SUPABASE_HOST: ${{ secrets.SUPABASE_HOST }}
+  SUPABASE_SECRET: ${{ secrets.SUPABASE_SECRET }}
 
 jobs:
   run-tests:
@@ -72,19 +84,33 @@ jobs:
     needs:
       - build-and-push-image
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: create env file
-      run: |
-        echo "GIT_COMMIT_HASH=${{ github.sha }}" >> ./envfile
+      - name: Create env file
+        run: |
+          echo "GIT_COMMIT_HASH=${{ github.sha }}" > ./envfile
+          echo "B2_ACCOUNT_ID=${{ secrets.B2_ACCOUNT_ID }}" >> ./envfile
+          echo "B2_APPLICATION_KEY=${{ secrets.B2_APPLICATION_KEY }}" >> ./envfile
+          echo "B2_APPLICATION_KEY_ID=${{ secrets.B2_APPLICATION_KEY_ID }}" >> ./envfile
+          echo "B2_APPLICATION_KEY_NAME=${{ secrets.B2_APPLICATION_KEY_NAME }}" >> ./envfile
+          echo "B2_BASE_URL=${{ secrets.B2_BASE_URL }}" >> ./envfile
+          echo "B2_BUCKET_NAME=${{ secrets.B2_BUCKET_NAME }}" >> ./envfile
+          echo "BLUEPRINT_DB_DATABASE=${{ secrets.BLUEPRINT_DB_DATABASE }}" >> ./envfile
+          echo "BLUEPRINT_DB_HOST=${{ secrets.BLUEPRINT_DB_HOST }}" >> ./envfile
+          echo "BLUEPRINT_DB_PORT=${{ secrets.BLUEPRINT_DB_PORT }}" >> ./envfile
+          echo "BLUEPRINT_DB_SCHEMA=${{ secrets.BLUEPRINT_DB_SCHEMA }}" >> ./envfile
+          echo "BLUEPRINT_DB_USERNAME=${{ secrets.BLUEPRINT_DB_USERNAME }}" >> ./envfile
+          echo "PORT=${{ secrets.PORT }}" >> ./envfile
+          echo "SUPABASE_HOST=${{ secrets.SUPABASE_HOST }}" >> ./envfile
+          echo "SUPABASE_SECRET=${{ secrets.SUPABASE_SECRET }}" >> ./envfile
 
-    - name: Docker Stack Deploy
-      uses: cssnr/stack-deploy-action@v1
-      with:
-        name: lommeulken-stack
-        file: docker-stack.yaml
-        host: joachimhorshauge.dk
-        user: deploy
-        ssh_key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
-        env_file: ./envfile
+      - name: Docker Stack Deploy
+        uses: cssnr/stack-deploy-action@v1
+        with:
+          name: lommeulken-stack
+          file: docker-stack.yaml
+          host: joachimhorshauge.dk
+          user: deploy
+          ssh_key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          env_file: ./envfile
