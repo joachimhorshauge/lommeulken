@@ -65,8 +65,12 @@ services:
     secrets:
       - db-password
     environment:
-      - POSTGRES_DB=${BLUEPRINT_DB_DATABASE}
+      - POSTGRES_HOST=db
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=lommeulken
+      - POSTGRES_PORT=5432
+      - POSTGRES_SSLMODE=disable
     healthcheck:
       test: [ "CMD", "pg_isready" ]
       interval: 10s
