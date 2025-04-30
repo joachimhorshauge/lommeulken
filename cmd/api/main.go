@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"lommeulken/gen/dbstore"
+	database "lommeulken/internal/database/sql"
 	"lommeulken/internal/handler"
 	"lommeulken/internal/middleware"
 	"lommeulken/internal/server"
@@ -113,6 +114,8 @@ func main() {
 	}
 	defer pool.Close()
 	slog.Info("Successfully connected to database")
+
+	database.ApplyMigrations(pool)
 
 	queries := dbstore.New(pool)
 
