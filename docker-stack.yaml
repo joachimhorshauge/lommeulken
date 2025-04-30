@@ -41,7 +41,7 @@ services:
       BLUEPRINT_DB_DATABASE: lommeulken
       BLUEPRINT_DB_PORT: 5432
       BLUEPRINT_DB_HOST: db
-      BLUEPRINT_DB_PASSWORD=/run/secrets/db-password
+      BLUEPRINT_DB_PASSWORD: /run/secrets/db-password
       BLUEPRINT_DB_SCHEMA: public
       SUPABASE_HOST: ${SUPABASE_HOST}
       SUPABASE_SECRET: ${SUPABASE_SECRET}
