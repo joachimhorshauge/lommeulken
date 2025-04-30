@@ -99,6 +99,7 @@ jobs:
           echo "B2_BUCKET_NAME=${{ secrets.B2_BUCKET_NAME }}" >> ./envfile
           echo "BLUEPRINT_DB_DATABASE=${{ secrets.BLUEPRINT_DB_DATABASE }}" >> ./envfile
           echo "BLUEPRINT_DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ./envfile
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ./envfile
           echo "BLUEPRINT_DB_HOST=${{ secrets.BLUEPRINT_DB_HOST }}" >> ./envfile
           echo "BLUEPRINT_DB_PORT=${{ secrets.BLUEPRINT_DB_PORT }}" >> ./envfile
           echo "BLUEPRINT_DB_SCHEMA=${{ secrets.BLUEPRINT_DB_SCHEMA }}" >> ./envfile
