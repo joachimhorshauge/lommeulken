@@ -37,7 +37,7 @@ jobs:
 
       - name: Run templ generate
         shell: bash
-        run: templ generate -path . && go get github.com/a-h/templ && go get github.com/a-h/templ/runtime
+        run: templ generate -path . && go get github.com/a-h/templ && go get github.com/a-h/templ/runtime && go get github.com/pressly/goose/v3
 
       - name: Build
         run: go build -v ./...
