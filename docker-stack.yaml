@@ -50,12 +50,9 @@ services:
       B2_BUCKET_NAME: ${B2_BUCKET_NAME}
       B2_BASE_URL: ${B2_BASE_URL}
     deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 5
-    networks:
-      - app-net
+      mode: replicated
+      replicas: 3
+    restart: always
     depends_on:
       - db
 
@@ -76,8 +73,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - app-net
 
 volumes:
   db-data:
