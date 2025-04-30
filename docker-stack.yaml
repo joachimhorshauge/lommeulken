@@ -59,7 +59,7 @@ services:
 
   db:
     image: postgres
-    user: postgres
+    user: ${BLUEPRINT_DB_USERNAME}
     volumes:
       - db-data:/var/lib/postgresql/data
     secrets:
