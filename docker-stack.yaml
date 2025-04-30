@@ -37,12 +37,12 @@ services:
     environment:
       APP_ENV: ${APP_ENV}
       PORT: ${PORT}
-      BLUEPRINT_DB_HOST: ${BLUEPRINT_DB_HOST}
-      BLUEPRINT_DB_PORT: ${BLUEPRINT_DB_PORT}
-      BLUEPRINT_DB_DATABASE: ${BLUEPRINT_DB_DATABASE}
-      BLUEPRINT_DB_USERNAME: ${BLUEPRINT_DB_USERNAME}
-      BLUEPRINT_DB_PASSWORD: ${BLUEPRINT_DB_PASSWORD}
-      BLUEPRINT_DB_SCHEMA: ${BLUEPRINT_DB_SCHEMA}
+      BLUEPRINT_DB_USERNAME: postgres
+      BLUEPRINT_DB_DATABASE: lommeulken
+      BLUEPRINT_DB_PORT: 5432
+      BLUEPRINT_DB_HOST: db
+      BLUEPRINT_DB_PASSWORD=/run/secrets/db-password
+      BLUEPRINT_DB_SCHEMA: public
       SUPABASE_HOST: ${SUPABASE_HOST}
       SUPABASE_SECRET: ${SUPABASE_SECRET}
       B2_ACCOUNT_ID: ${B2_ACCOUNT_ID}
@@ -52,8 +52,10 @@ services:
       B2_BUCKET_NAME: ${B2_BUCKET_NAME}
       B2_BASE_URL: ${B2_BASE_URL}
     deploy:
-      update_config:
-        order: start-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
     depends_on:
       - db
 
