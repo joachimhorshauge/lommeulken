@@ -51,10 +51,11 @@ services:
       B2_BASE_URL: ${B2_BASE_URL}
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 2
     restart: always
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: postgres
@@ -77,8 +78,3 @@ services:
 volumes:
   db-data:
   letsencrypt:
-
-networks:
-  app-net:
-    driver: overlay
-    attachable: true
