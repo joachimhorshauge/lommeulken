@@ -56,6 +56,8 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 5
+    networks:
+      - app-net
     depends_on:
       - db
 
@@ -78,6 +80,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - app-net
 
 volumes:
   db-data:
@@ -86,3 +90,8 @@ volumes:
 secrets:
   db-password:
     external: true
+
+networks:
+  app-net:
+    driver: overlay
+    attachable: true
