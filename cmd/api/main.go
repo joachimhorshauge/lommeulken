@@ -55,7 +55,7 @@ func main() {
 		os.Getenv("B2_APPLICATION_KEY"),
 	)
 	if err != nil {
-		slog.Error("Failed to initialize B2 client", "Error", err)
+		slog.Error("Failed to initialize B2 client", "Error", err, "app_key", os.Getenv("B2_APPLICATION_KEY"))
 		os.Exit(1)
 	}
 	slog.Info("Successfully connected to bucket")

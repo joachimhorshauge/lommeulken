@@ -35,12 +35,22 @@ services:
     secrets:
       - db-password
     environment:
-      - POSTGRES_HOST=db
-      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=app
-      - POSTGRES_PORT=5432
-      - POSTGRES_SSLMODE=disable
+      APP_ENV: ${APP_ENV}
+      PORT: ${PORT}
+      BLUEPRINT_DB_HOST: ${BLUEPRINT_DB_HOST}
+      BLUEPRINT_DB_PORT: ${BLUEPRINT_DB_PORT}
+      BLUEPRINT_DB_DATABASE: ${BLUEPRINT_DB_DATABASE}
+      BLUEPRINT_DB_USERNAME: ${BLUEPRINT_DB_USERNAME}
+      BLUEPRINT_DB_PASSWORD: ${BLUEPRINT_DB_PASSWORD}
+      BLUEPRINT_DB_SCHEMA: ${BLUEPRINT_DB_SCHEMA}
+      SUPABASE_HOST: ${SUPABASE_HOST}
+      SUPABASE_SECRET: ${SUPABASE_SECRET}
+      B2_ACCOUNT_ID: ${B2_ACCOUNT_ID}
+      B2_APPLICATION_KEY_ID: ${B2_APPLICATION_KEY_ID}
+      B2_APPLICATION_KEY_NAME: ${B2_APPLICATION_KEY_NAME}
+      B2_APPLICATION_KEY: ${B2_APPLICATION_KEY}
+      B2_BUCKET_NAME: ${B2_BUCKET_NAME}
+      B2_BASE_URL: ${B2_BASE_URL}
     deploy:
       update_config:
         order: start-first
@@ -55,7 +65,7 @@ services:
     secrets:
       - db-password
     environment:
-      - POSTGRES_DB=app
+      - POSTGRES_DB=${BLUEPRINT_DB_DATABASE}
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
     healthcheck:
       test: [ "CMD", "pg_isready" ]

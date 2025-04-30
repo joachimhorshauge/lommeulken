@@ -23,7 +23,6 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then \
         echo "Unsupported architecture: $TARGETARCH"; exit 1; \
     fi && \
     chmod +x tailwindcss && \
-    ls -lah
 
 # Run tailwindcss to generate CSS
 RUN ./tailwindcss -i cmd/web/styles/input.css -o cmd/web/assets/css/output.css
