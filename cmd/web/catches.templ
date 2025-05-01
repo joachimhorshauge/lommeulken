@@ -29,7 +29,7 @@ templ CatchesIndex() {
 					@ButtonLink("Ny fangst", "/catches/new")
 					@FilterModal()
 				</div>
-				<div id="catches-container">
+				<div class="md:w-3/5" id="catches-container">
 					<div hx-get="/catches/cards" hx-trigger="load"></div>
 				</div>
 			</div>
@@ -515,7 +515,7 @@ templ FilterModal() {
 }
 
 templ CatchCards(cards []CardInfo) {
-	<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+	<div class="grid grid-cols-1 md:grid-cols-[1fr_1fr] gap-6 w-full place-items-stretch">
 		for _, card := range cards {
 			@Card(card)
 		}
