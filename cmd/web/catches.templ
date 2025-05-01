@@ -24,11 +24,8 @@ templ CatchesIndex() {
 	@Base() {
 		@Sidebar() {
 			<div class="flex-col flex items-center justify-center">
-				<h2 class="justify-center">Fangster</h2>
-				<div class="flex flex-row justify-around w-full m-4">
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-						<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 0 1-1.125-1.125v-3.75ZM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 0 1-1.125-1.125v-8.25ZM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 0 1-1.125-1.125v-2.25Z"></path>
-					</svg>
+				<h2 class="justify-center text-4xl font-bold m-4">Fangster</h2>
+				<div class="flex flex-row justify-center w-full m-4 gap-6">
 					@ButtonLink("Ny fangst", "/catches/new")
 					@FilterModal()
 				</div>
@@ -191,11 +188,8 @@ templ FilterModal() {
 		<button
 			x-on:click="modalIsOpen = true"
 			type="button"
-			class="flex items-center gap-2 whitespace-nowrap rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-outline-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:focus-visible:outline-outline-dark-strong"
+			class="flex items-center gap-2 whitespace-nowrap rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-outline-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:focus-visible:outline-outline-dark-strong w-32"
 		>
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
-				<path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12"></path>
-			</svg>
 			Sorter/filtrer
 		</button>
 		<!-- Modal -->
@@ -521,7 +515,7 @@ templ FilterModal() {
 }
 
 templ CatchCards(cards []CardInfo) {
-	<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
 		for _, card := range cards {
 			@Card(card)
 		}
