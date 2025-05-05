@@ -222,7 +222,7 @@ func (h *Handler) NewCatchHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		catchInfo := web.CatchInfo{
-			Title:       r.FormValue("Title"),
+			Title:       r.FormValue("title"),
 			Description: r.FormValue("description"),
 			Date:        r.FormValue("date"),
 			Species:     r.FormValue("species"),
