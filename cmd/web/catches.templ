@@ -1,5 +1,7 @@
 package web
 
+import "lommeulken/cmd/view"
+
 type CatchInfo struct {
 	Title       string
 	Description string
@@ -26,7 +28,9 @@ templ CatchesIndex() {
 			<div class="flex-col flex items-center justify-center">
 				<h2 class="justify-center text-4xl font-bold m-4">Fangster</h2>
 				<div class="flex flex-row justify-center w-full m-4 gap-6">
-					@ButtonLink("Ny fangst", "/catches/new")
+					if view.AuthenticatedUser(ctx).LoggedIn {
+						@ButtonLink("Ny fangst", "/catches/new")
+					}
 					@FilterModal()
 				</div>
 				<div class="md:w-3/5 w-4/5" id="catches-container">
