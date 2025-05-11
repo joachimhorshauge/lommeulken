@@ -1,0 +1,112 @@
+package web
+
+templ AboutUsIndex() {
+	@Base() {
+		@Sidebar() {
+			<!-- About Section -->
+			<div class="w-full m-auto md:w-4/6 flex-column justify-center">
+				<section class="mb-12 bg-surface-alt dark:bg-surface-dark-alt rounded-lg shadow-md p-6">
+					<h2 class="text-2xl font-semibold text-primary dark:text-primary-dark mb-4">Vores historie</h2>
+					<div class="prose max-w-none text-on-surface dark:text-on-surface-dark">
+						<p class="mb-4">
+							Lommeulken er en fiskeforening for studerende i Aarhus. Foreningen blev stiftet på en våd biologisk felttur til Polen i 1999 og blev døbt Lommeulken. 
+						</p>
+						<p class="mb-4">
+							Dengang var foreningen forbeholdt biologistuderende i Aarhus, men siden er den blevet åbnet for alle studerende i Aarhus. I øjeblikket er vi godt 50 medlemmer, hvoraf de studerende kommer fra vidt forskellige studieretninger lige fra biologi til Jura, og mange andre studier er herimellem repræsenteret, og der er stadig plads til nye medlemmer.
+						</p>
+						<p class="mb-4">
+							Foreningen afholder fælles ture for medlemmerne ca. en gang hver måned, og forsøger hver gang at ramme det fiskeri, der er oppe i årstiden. Tidligere ture har bl.a. været efter havørred i åen og på kyst, gedde, suder, karpe, brasen, skalle, knude, hvarrer, helt og mange flere...
+						</p>
+						<p>
+							Der kører over hele året en frivillig konkurrence blandt Lommulkens medlemmer om, at fange de største fisk indenfor en række forskellige arter og vinde hæder og anerkendelse fra de øvrige ulke - se mere under "Ulkekonkurrencen". Har du spørgsmål eller ønsker du at høre mere om Lommeulken, så skriv endelig til bestyrelsen eller til <a href="mailto:lommeulken@hotmail.com" class="text-info hover:underline">lommeulken@hotmail.com</a>.
+						</p>
+					</div>
+				</section>
+				<!-- Board Section -->
+				<section class="mb-12">
+					<h2 class="text-2xl font-semibold text-primary dark:text-primary-dark mb-6 text-center">Bestyrelsen</h2>
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+						<!-- Chairman -->
+						<div class="bg-surface-alt dark:bg-surface-dark-alt rounded-lg shadow-md overflow-hidden">
+							<div class="img-container bg-neutral-200 dark:bg-neutral-700">
+								<img src="https://www.lommeulken.dk/site/gfx/bestyr/mads.jpg"/>
+							</div>
+							<div class="p-6">
+								<h3 class="text-xl font-semibold text-primary dark:text-primary-dark mb-2">Formand</h3>
+								<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1">Mads Møller Nielsen</p>
+								<p class="text-on-surface dark:text-on-surface-dark mb-1"><a href="mailto:formand@lommeulken.dk" class="hover:underline">formand@lommeulken.dk</a></p>
+								<p class="text-on-surface dark:text-on-surface-dark">Tlf. 25175674</p>
+							</div>
+						</div>
+						<!-- Vice Chairman -->
+						<div class="bg-surface-alt dark:bg-surface-dark-alt rounded-lg shadow-md overflow-hidden">
+							<div class="img-container bg-neutral-200 dark:bg-neutral-700">
+								<img src="https://www.lommeulken.dk/site/gfx/bestyr/sonne.jpg"/>
+							</div>
+							<div class="p-6">
+								<h3 class="text-xl font-semibold text-primary dark:text-primary-dark mb-2">Næstformand</h3>
+								<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1">Rasmus Sonne</p>
+								<p class="text-on-surface dark:text-on-surface-dark mb-1"><a href="mailto:naestformand@lommeulken.dk" class="hover:underline">naestformand@lommeulken.dk</a></p>
+								<p class="text-on-surface dark:text-on-surface-dark">Tlf. 21155537</p>
+							</div>
+						</div>
+						<!-- Treasurer -->
+						<div class="bg-surface-alt dark:bg-surface-dark-alt rounded-lg shadow-md overflow-hidden">
+							<div class="img-container bg-neutral-200 dark:bg-neutral-700">
+								<img src="https://scontent-arn2-1.xx.fbcdn.net/v/t1.6435-9/67443948_10216360192331680_2671623237552570368_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=wqkH2MIlIXUQ7kNvwFQffG2&_nc_oc=AdkVCVycGHgloQdoX4yy34Os5WCJkFTndkeR1SXxL2_RAk86tAXKaDL8697I0uyYps8&_nc_zt=23&_nc_ht=scontent-arn2-1.xx&_nc_gid=DMINyq9mxQDVd8KDQtkjXA&oh=00_AfI4mbkRjVfi4oh34ob1MIbyG8KQ2BfOkgISeztdhC2VhA&oe=6847F9D2"/>
+							</div>
+							<div class="p-6">
+								<h3 class="text-xl font-semibold text-primary dark:text-primary-dark mb-2">Kasserer</h3>
+								<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong mb-1">Rasmus Wrang</p>
+								<p class="text-on-surface dark:text-on-surface-dark mb-1"><a href="mailto:kasserer@lommeulken.dk" class="hover:underline">kasserer@lommeulken.dk</a></p>
+								<p class="text-on-surface dark:text-on-surface-dark">Tlf. 53638613</p>
+							</div>
+						</div>
+						<!-- IT Responsible -->
+						<div class="bg-surface-alt dark:bg-surface-dark-alt rounded-lg shadow-md p-6">
+							<h3 class="text-xl font-semibold text-primary dark:text-primary-dark mb-2">IT-Ansvarlig</h3>
+							<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Joachim Horshauge</p>
+						</div>
+						<!-- Boat Responsible -->
+						<div class="bg-surface-alt dark:bg-surface-dark-alt rounded-lg shadow-md p-6">
+							<h3 class="text-xl font-semibold text-primary dark:text-primary-dark mb-2">Båd-Ansvarlig</h3>
+							<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Lars Sandgaard</p>
+						</div>
+						<!-- Regular Member -->
+						<div class="bg-surface-alt dark:bg-surface-dark-alt rounded-lg shadow-md p-6">
+							<h3 class="text-xl font-semibold text-primary dark:text-primary-dark mb-2">Menigt medlem</h3>
+							<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Simon Kastbjerg</p>
+						</div>
+					</div>
+				</section>
+				<!-- Auditors Section -->
+				<section class="mb-12">
+					<h2 class="text-2xl font-semibold text-primary dark:text-primary-dark mb-6 text-center">Revisorer</h2>
+					<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+						<div class="bg-surface-alt dark:bg-surface-dark-alt rounded-lg shadow-md p-6 text-center">
+							<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Kasper Hansen</p>
+						</div>
+						<div class="bg-surface-alt dark:bg-surface-dark-alt rounded-lg shadow-md p-6 text-center">
+							<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Nicolaj G. Holm</p>
+						</div>
+						<div class="bg-surface-alt dark:bg-surface-dark-alt rounded-lg shadow-md p-6 text-center">
+							<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Rasmus Ottosen (Suppleant)</p>
+						</div>
+					</div>
+				</section>
+				<!-- Substitutes Section -->
+				<section>
+					<h2 class="text-2xl font-semibold text-primary dark:text-primary-dark mb-6 text-center">Suppleanter</h2>
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div class="bg-surface-alt dark:bg-surface-dark-alt rounded-lg shadow-md p-6 text-center">
+							<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Jonas Bjerre</p>
+						</div>
+						<div class="bg-surface-alt dark:bg-surface-dark-alt rounded-lg shadow-md p-6 text-center">
+							<p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Malthe Wisler Johansen</p>
+						</div>
+					</div>
+				</section>
+			</div>
+		}
+	}
+}

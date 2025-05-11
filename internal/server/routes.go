@@ -20,6 +20,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.HandleFunc("/catches/new", s.handler.NewCatchHandler)
 	mux.HandleFunc("/catches/cards", s.handler.CatchCards)
 	mux.HandleFunc("/catch/{id}", s.handler.HandleCatchPageIndex)
+	mux.HandleFunc("/about", s.handler.AboutIndexHandler)
 
 	mux.HandleFunc("/api/users", s.handler.HandleListUsers)
 	mux.HandleFunc("/api/species", s.handler.HandleListSpecies)
