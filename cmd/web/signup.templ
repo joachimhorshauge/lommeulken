@@ -7,6 +7,13 @@ type UserSignupCredentials struct {
 	ConfirmPassword string
 	FirstName       string
 	LastName        string
+	Birthdate       string
+	Phone           string
+	Street          string
+	HouseNumber     string
+	ZipCode         string
+	City            string
+	Study           string
 }
 
 type SignupErrors struct {
@@ -23,9 +30,9 @@ templ SignupIndex() {
 				style="background-image: url('/assets/img/fishing-scene.jpeg'); background-size: cover; background-position: center;"
 			>
 				<div class="p-8 flex-1">
-					<div class="w-80 md:w-[32rem] bg-white/0 rounded-3xl mx-auto overflow-hidden shadow-xl">
-						<div class="px-10 pt-4 pb-8 bg-white/95 rounded-tr-4xl">
-							<h1 class="mt-4 text-2xl font-semibold text-gray-900 text-center">Ny bruger</h1>
+					<div class="w-80 md:w-[48rem] bg-primary/0 dark:bg-primary-dark/0 rounded-3xl mx-auto overflow-hidden shadow-xl">
+						<div class="px-10 pt-4 pb-8 bg-surface-alt/95 dark:bg-surface-dark-alt/95 rounded-tr-4xl">
+							<h1 class="mt-4 text-2xl font-semibold text-on-surface-strong dark:text-on-surface-dark-strong text-center">Bliv Medlem</h1>
 							@SignupForm(UserSignupCredentials{}, SignupErrors{})
 						</div>
 					</div>
@@ -36,119 +43,347 @@ templ SignupIndex() {
 }
 
 templ SignupForm(user UserSignupCredentials, errors SignupErrors) {
-	<div id="signup-form" class="mt-6">
-		<form
-			class="mt-8 flex flex-col gap-6"
-			hx-post="/signup"
-			hx-target="#signup-form"
-			hx-swap="outerHTML"
-		>
-			<div class="relative">
-				<input
-					type="email"
-					id="email"
-					name="email"
-					value={ user.Email }
-					placeholder="Email"
-					required
-					class="peer h-10 w-full border-b-2 border-gray-600 bg-transparent text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
-				/>
-				<label
-					for="email"
-					class="absolute left-0 -top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-900 peer-focus:text-sm"
-				>
-					Email
-				</label>
-				if errors.EmailInvalid != "" {
-					<p class="text-red-500 text-sm mt-1">{ errors.EmailInvalid }</p>
-				}
-			</div>
-			<div class="grid grid-cols-1 gap-y-6 md:grid-cols-2 md:gap-x-4">
-				<!-- First Name -->
-				<div class="relative">
-					<input
-						id="firstName"
-						name="firstName"
-						type="text"
-						value={ user.FirstName }
-						class="peer h-10 w-full border-b-2 border-gray-600 bg-transparent text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
-						placeholder="First Name"
-					/>
-					<label
-						for="firstName"
-						class="absolute left-0 -top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-900 peer-focus:text-sm"
-					>
-						Fornavn
-					</label>
+	<div class="mt-6">
+		<div class="md:flex md:gap-8">
+			<!-- Information Box - appears first on mobile, left on desktop -->
+			<div class="mb-8 md:mb-0 md:w-1/2 bg-surface-alt border border-outline rounded-lg p-6 dark:bg-surface-dark-alt dark:border-outline-dark">
+				<h2 class="text-xl md:text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Medlemskontingent</h2>
+				<div class="mb-6">
+					<h3 class="text-base md:text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3">Kontingentet udgør i 2025:</h3>
+					<!-- Mobile-first design -->
+					<div class="block md:hidden">
+						<!-- Mobile card layout -->
+						<div class="mb-3 border border-outline dark:border-outline-dark rounded-lg p-3">
+							<div class="flex justify-between mb-1">
+								<span class="text-sm font-medium">Kontingent Danmarks Sportsfiskerforbund</span>
+							</div>
+							<div class="flex justify-end">
+								<span class="text-right text-on-surface dark:text-on-surface-dark mr-1">kr.</span>
+								<span class="text-right font-medium text-on-surface-strong dark:text-on-surface-dark-strong">375,00</span>
+							</div>
+						</div>
+						<div class="mb-3 border border-outline dark:border-outline-dark rounded-lg p-3">
+							<div class="flex justify-between mb-1">
+								<span class="text-sm font-medium">Kontingent Lommeulken</span>
+							</div>
+							<div class="flex justify-end">
+								<span class="text-right text-on-surface dark:text-on-surface-dark mr-1">kr.</span>
+								<span class="text-right font-medium text-on-surface-strong dark:text-on-surface-dark-strong">123,00</span>
+							</div>
+						</div>
+						<div class="bg-surface-variant dark:bg-surface-variant-dark rounded-lg p-3">
+							<div class="flex justify-between">
+								<span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">I alt</span>
+								<div class="flex">
+									<span class="text-right font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mr-1">kr.</span>
+									<span class="text-right font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">498,00</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Desktop table layout -->
+					<table class="hidden md:table w-full border-collapse">
+						<tbody>
+							<tr>
+								<td class="py-2 border-b border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark">Kontingent Danmarks Sportsfiskerforbund</td>
+								<td class="py-2 border-b border-outline text-right text-on-surface dark:border-outline-dark dark:text-on-surface-dark w-12">kr.</td>
+								<td class="py-2 border-b border-outline text-right font-medium text-on-surface-strong dark:border-outline-dark dark:text-on-surface-dark-strong w-24">375,00</td>
+							</tr>
+							<tr>
+								<td class="py-2 border-b border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark">Kontingent Lommeulken</td>
+								<td class="py-2 border-b border-outline text-right text-on-surface dark:border-outline-dark dark:text-on-surface-dark w-12">kr.</td>
+								<td class="py-2 border-b border-outline text-right font-medium text-on-surface-strong dark:border-outline-dark dark:text-on-surface-dark-strong w-24">123,00</td>
+							</tr>
+							<tr class="bg-surface-variant dark:bg-surface-variant-dark">
+								<td class="py-2 font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">I alt</td>
+								<td class="py-2 text-right font-semibold text-on-surface-strong dark:text-on-surface-dark-strong w-12">kr.</td>
+								<td class="py-2 text-right font-semibold text-on-surface-strong dark:text-on-surface-dark-strong w-24">498,00</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
-				<!-- Last Name -->
-				<div class="relative">
-					<input
-						id="lastName"
-						name="lastName"
-						type="text"
-						value={ user.LastName }
-						class="peer h-10 w-full border-b-2 border-gray-600 bg-transparent text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
-						placeholder="Last Name"
-					/>
-					<label
-						for="lastName"
-						class="absolute left-0 -top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-900 peer-focus:text-sm"
-					>
-						Efternavn
-					</label>
+				<div class="p-4 bg-primary/10 rounded-lg border border-outline dark:bg-primary-dark/10 dark:border-outline-dark">
+					<p class="text-sm text-on-surface-strong dark:text-on-surface-dark-strong">
+						<strong>Bemærk:</strong> Såfremt du allerede er medlem af Danmarks Sportsfiskerforbund via en anden forening, udgør kontingentet alene kr. 123,00.
+					</p>
+				</div>
+				<div class="mt-6">
+					<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3">Fordele ved medlemskab:</h3>
+					<ul class="space-y-3">
+						<li class="flex items-start">
+							<svg class="h-5 w-5 text-success mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+							</svg>
+							<span class="text-on-surface dark:text-on-surface-dark">Alle fordele gennem Danmarks Sportsfiskerforbund</span>
+						</li>
+						<li class="flex items-start">
+							<svg class="h-5 w-5 text-success mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+							</svg>
+							<span class="text-on-surface dark:text-on-surface-dark">Adgang til foreningens fisketure og arrangementer</span>
+						</li>
+						<li class="flex items-start">
+							<svg class="h-5 w-5 text-success mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+							</svg>
+							<span class="text-on-surface dark:text-on-surface-dark">Medlemsrabatter hos udvalgte forhandlere</span>
+						</li>
+					</ul>
 				</div>
 			</div>
-			<div class="relative">
-				<input
-					type="password"
-					id="password"
-					name="password"
-					placeholder="Kodeord"
-					required
-					class="peer h-10 w-full border-b-2 border-gray-600 bg-transparent text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
-				/>
-				<label
-					for="password"
-					class="absolute left-0 -top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-900 peer-focus:text-sm"
+			<!-- Signup Form - appears second on mobile, right on desktop -->
+			<div id="signup-form" class="md:w-1/2">
+				<form
+					class="mt-8 flex flex-col gap-6"
+					hx-post="/signup"
+					hx-target="#signup-form"
+					hx-swap="outerHTML"
 				>
-					Kodeord
-				</label>
-				if errors.PasswordInvalid != "" {
-					<p class="text-red-500 text-sm mt-1">{ errors.PasswordInvalid }</p>
-				}
-			</div>
-			<div class="relative">
-				<input
-					type="password"
-					id="confirmPassword"
-					name="confirmPassword"
-					placeholder="Bekræft kodeord"
-					required
-					class="peer h-10 w-full border-b-2 border-gray-600 bg-transparent text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
-				/>
-				<label
-					for="confirmPassword"
-					class="absolute left-0 -top-3.5 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-gray-900 peer-focus:text-sm"
+					<div class="grid grid-cols-1 gap-y-6 md:grid-cols-2 md:gap-x-4">
+						<!-- First Name -->
+						<div class="relative">
+							<input
+								id="firstName"
+								name="firstName"
+								type="text"
+								value={ user.FirstName }
+								class="peer h-10 w-full border-b-2 border-outline-strong bg-transparent text-on-surface-strong placeholder-transparent focus:outline-none focus:border-primary dark:border-outline-dark-strong dark:text-on-surface-dark-strong dark:focus:border-primary-dark"
+								placeholder="First Name"
+							/>
+							<label
+								for="firstName"
+								class="absolute left-0 -top-3.5 text-on-surface text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-on-surface peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-on-surface-strong peer-focus:text-sm dark:text-on-surface-dark dark:peer-placeholder-shown:text-on-surface-dark dark:peer-focus:text-on-surface-dark-strong"
+							>
+								Fornavn
+							</label>
+						</div>
+						<!-- Last Name -->
+						<div class="relative">
+							<input
+								id="lastName"
+								name="lastName"
+								type="text"
+								value={ user.LastName }
+								class="peer h-10 w-full border-b-2 border-outline-strong bg-transparent text-on-surface-strong placeholder-transparent focus:outline-none focus:border-primary dark:border-outline-dark-strong dark:text-on-surface-dark-strong dark:focus:border-primary-dark"
+								placeholder="Last Name"
+							/>
+							<label
+								for="lastName"
+								class="absolute left-0 -top-3.5 text-on-surface text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-on-surface peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-on-surface-strong peer-focus:text-sm dark:text-on-surface-dark dark:peer-placeholder-shown:text-on-surface-dark dark:peer-focus:text-on-surface-dark-strong"
+							>
+								Efternavn
+							</label>
+						</div>
+					</div>
+					<!-- Email -->
+					<div class="relative">
+						<input
+							type="email"
+							id="email"
+							name="email"
+							value={ user.Email }
+							placeholder="Email"
+							required
+							class="peer h-10 w-full border-b-2 border-outline-strong bg-transparent text-on-surface-strong placeholder-transparent focus:outline-none focus:border-primary dark:border-outline-dark-strong dark:text-on-surface-dark-strong dark:focus:border-primary-dark"
+						/>
+						<label
+							for="email"
+							class="absolute left-0 -top-3.5 text-on-surface text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-on-surface peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-on-surface-strong peer-focus:text-sm dark:text-on-surface-dark dark:peer-placeholder-shown:text-on-surface-dark dark:peer-focus:text-on-surface-dark-strong"
+						>
+							Email
+						</label>
+						if errors.EmailInvalid != "" {
+							<p class="text-danger text-sm mt-1">{ errors.EmailInvalid }</p>
+						}
+					</div>
+					<!-- Birthdate -->
+					<div class="relative">
+						<input
+							type="date"
+							id="birthdate"
+							name="birthdate"
+							value={ user.Birthdate }
+							class="peer h-10 w-full border-b-2 border-outline-strong bg-transparent text-on-surface-strong placeholder-transparent focus:outline-none focus:border-primary dark:border-outline-dark-strong dark:text-on-surface-dark-strong dark:focus:border-primary-dark"
+						/>
+						<label
+							for="birthdate"
+							class="absolute left-0 -top-3.5 text-on-surface text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-on-surface peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-on-surface-strong peer-focus:text-sm dark:text-on-surface-dark dark:peer-placeholder-shown:text-on-surface-dark dark:peer-focus:text-on-surface-dark-strong"
+						>
+							Fødselsdato
+						</label>
+					</div>
+					<!-- Address - Split into multiple fields -->
+					<div class="grid grid-cols-1 gap-y-6 md:grid-cols-2 md:gap-x-4">
+						<!-- Street -->
+						<div class="relative">
+							<input
+								id="street"
+								name="street"
+								type="text"
+								value={ user.Street }
+								class="peer h-10 w-full border-b-2 border-outline-strong bg-transparent text-on-surface-strong placeholder-transparent focus:outline-none focus:border-primary dark:border-outline-dark-strong dark:text-on-surface-dark-strong dark:focus:border-primary-dark"
+								placeholder="Street"
+							/>
+							<label
+								for="street"
+								class="absolute left-0 -top-3.5 text-on-surface text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-on-surface peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-on-surface-strong peer-focus:text-sm dark:text-on-surface-dark dark:peer-placeholder-shown:text-on-surface-dark dark:peer-focus:text-on-surface-dark-strong"
+							>
+								Vejnavn
+							</label>
+						</div>
+						<!-- House Number -->
+						<div class="relative">
+							<input
+								id="houseNumber"
+								name="houseNumber"
+								type="text"
+								value={ user.HouseNumber }
+								class="peer h-10 w-full border-b-2 border-outline-strong bg-transparent text-on-surface-strong placeholder-transparent focus:outline-none focus:border-primary dark:border-outline-dark-strong dark:text-on-surface-dark-strong dark:focus:border-primary-dark"
+								placeholder="House Number"
+							/>
+							<label
+								for="houseNumber"
+								class="absolute left-0 -top-3.5 text-on-surface text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-on-surface peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-on-surface-strong peer-focus:text-sm dark:text-on-surface-dark dark:peer-placeholder-shown:text-on-surface-dark dark:peer-focus:text-on-surface-dark-strong"
+							>
+								Husnummer
+							</label>
+						</div>
+					</div>
+					<div class="grid grid-cols-1 gap-y-6 md:grid-cols-3 md:gap-x-4">
+						<!-- Zip Code -->
+						<div class="relative">
+							<input
+								id="zipCode"
+								name="zipCode"
+								type="text"
+								value={ user.ZipCode }
+								class="peer h-10 w-full border-b-2 border-outline-strong bg-transparent text-on-surface-strong placeholder-transparent focus:outline-none focus:border-primary dark:border-outline-dark-strong dark:text-on-surface-dark-strong dark:focus:border-primary-dark"
+								placeholder="Zip Code"
+							/>
+							<label
+								for="zipCode"
+								class="absolute left-0 -top-3.5 text-on-surface text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-on-surface peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-on-surface-strong peer-focus:text-sm dark:text-on-surface-dark dark:peer-placeholder-shown:text-on-surface-dark dark:peer-focus:text-on-surface-dark-strong"
+							>
+								Postnummer
+							</label>
+						</div>
+						<!-- City -->
+						<div class="relative md:col-span-2">
+							<input
+								id="city"
+								name="city"
+								type="text"
+								value={ user.City }
+								class="peer h-10 w-full border-b-2 border-outline-strong bg-transparent text-on-surface-strong placeholder-transparent focus:outline-none focus:border-primary dark:border-outline-dark-strong dark:text-on-surface-dark-strong dark:focus:border-primary-dark"
+								placeholder="City"
+							/>
+							<label
+								for="city"
+								class="absolute left-0 -top-3.5 text-on-surface text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-on-surface peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-on-surface-strong peer-focus:text-sm dark:text-on-surface-dark dark:peer-placeholder-shown:text-on-surface-dark dark:peer-focus:text-on-surface-dark-strong"
+							>
+								By
+							</label>
+						</div>
+					</div>
+					<!-- Phone -->
+					<div class="relative">
+						<input
+							type="tel"
+							id="phone"
+							name="phone"
+							value={ user.Phone }
+							class="peer h-10 w-full border-b-2 border-outline-strong bg-transparent text-on-surface-strong placeholder-transparent focus:outline-none focus:border-primary dark:border-outline-dark-strong dark:text-on-surface-dark-strong dark:focus:border-primary-dark"
+							placeholder="Phone"
+						/>
+						<label
+							for="phone"
+							class="absolute left-0 -top-3.5 text-on-surface text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-on-surface peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-on-surface-strong peer-focus:text-sm dark:text-on-surface-dark dark:peer-placeholder-shown:text-on-surface-dark dark:peer-focus:text-on-surface-dark-strong"
+						>
+							Telefonnummer
+						</label>
+					</div>
+					<!-- Study -->
+					<div class="relative">
+						<input
+							type="text"
+							id="study"
+							name="study"
+							value={ user.Study }
+							class="peer h-10 w-full border-b-2 border-outline-strong bg-transparent text-on-surface-strong placeholder-transparent focus:outline-none focus:border-primary dark:border-outline-dark-strong dark:text-on-surface-dark-strong dark:focus:border-primary-dark"
+							placeholder="Study"
+						/>
+						<label
+							for="study"
+							class="absolute left-0 -top-3.5 text-on-surface text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-on-surface peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-on-surface-strong peer-focus:text-sm dark:text-on-surface-dark dark:peer-placeholder-shown:text-on-surface-dark dark:peer-focus:text-on-surface-dark-strong"
+						>
+							Studie
+						</label>
+					</div>
+					<!-- Passwords -->
+					<div class="relative">
+						<input
+							type="password"
+							id="password"
+							name="password"
+							placeholder="Kodeord"
+							required
+							class="peer h-10 w-full border-b-2 border-outline-strong bg-transparent text-on-surface-strong placeholder-transparent focus:outline-none focus:border-primary dark:border-outline-dark-strong dark:text-on-surface-dark-strong dark:focus:border-primary-dark"
+						/>
+						<label
+							for="password"
+							class="absolute left-0 -top-3.5 text-on-surface text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-on-surface peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-on-surface-strong peer-focus:text-sm dark:text-on-surface-dark dark:peer-placeholder-shown:text-on-surface-dark dark:peer-focus:text-on-surface-dark-strong"
+						>
+							Kodeord
+						</label>
+						if errors.PasswordInvalid != "" {
+							<p class="text-danger text-sm mt-1">{ errors.PasswordInvalid }</p>
+						}
+					</div>
+					<div class="relative">
+						<input
+							type="password"
+							id="confirmPassword"
+							name="confirmPassword"
+							placeholder="Bekræft kodeord"
+							required
+							class="peer h-10 w-full border-b-2 border-outline-strong bg-transparent text-on-surface-strong placeholder-transparent focus:outline-none focus:border-primary dark:border-outline-dark-strong dark:text-on-surface-dark-strong dark:focus:border-primary-dark"
+						/>
+						<label
+							for="confirmPassword"
+							class="absolute left-0 -top-3.5 text-on-surface text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-on-surface peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-on-surface-strong peer-focus:text-sm dark:text-on-surface-dark dark:peer-placeholder-shown:text-on-surface-dark dark:peer-focus:text-on-surface-dark-strong"
+						>
+							Bekræft kodeord
+						</label>
+						if errors.PasswordMismatch != "" {
+							<p class="text-danger text-sm mt-1">{ errors.PasswordMismatch }</p>
+						}
+					</div>
+					<!-- DSF Membership Checkbox -->
+					<div class="relative">
+						<label for="checkboxDefault" class="flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
+							<span class="relative flex items-center">
+								<input id="checkboxDefault" type="checkbox" class="before:content[''] peer relative size-4 appearance-none overflow-hidden rounded-sm border border-outline bg-surface-alt before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 disabled:cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark" checked/>
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="4" class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark">
+									<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+								</svg>
+							</span>
+							<span>Er du allerede medlem af Danmarks Sportsfiskerforbund?</span>
+						</label>
+					</div>
+					<button
+						type="submit"
+						class="mt-10 w-full py-2 px-4 rounded bg-primary text-on-primary font-semibold text-center focus:outline-none focus:ring-2 focus:ring-offset-2 hover:bg-primary/90 dark:bg-primary-dark dark:text-on-primary-dark dark:hover:bg-primary-dark/90"
+					>
+						Tilmeld
+					</button>
+				</form>
+				<a
+					href="/login"
+					class="mt-4 block text-sm text-center font-medium text-primary hover:text-primary/90 focus:outline-none focus:ring-2 dark:text-primary-dark dark:hover:text-primary-dark/90"
 				>
-					Bekræft kodeord
-				</label>
-				if errors.PasswordMismatch != "" {
-					<p class="text-red-500 text-sm mt-1">{ errors.PasswordMismatch }</p>
-				}
+					Er du allerede medlem? Log på
+				</a>
 			</div>
-			<button
-				type="submit"
-				class="mt-10 w-full py-2 px-4 rounded bg-blue-600 hover:bg-blue-700 text-white font-semibold text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-			>
-				Tilmeld
-			</button>
-		</form>
-		<a
-			href="/login"
-			class="mt-4 block text-sm text-center font-medium text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-		>
-			Er du allerede medlem? Log på
-		</a>
+		</div>
 	</div>
 }
