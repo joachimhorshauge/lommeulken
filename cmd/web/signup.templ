@@ -43,7 +43,7 @@ templ SignupIndex() {
 }
 
 templ SignupForm(user UserSignupCredentials, errors SignupErrors) {
-	<div class="mt-6">
+	<div id="signup" class="mt-6">
 		<div class="md:flex md:gap-8">
 			<!-- Information Box - appears first on mobile, left on desktop -->
 			<div class="mb-8 md:mb-0 md:w-1/2 bg-surface-alt border border-outline rounded-lg p-6 dark:bg-surface-dark-alt dark:border-outline-dark">
@@ -136,7 +136,7 @@ templ SignupForm(user UserSignupCredentials, errors SignupErrors) {
 				<form
 					class="mt-8 flex flex-col gap-6"
 					hx-post="/signup"
-					hx-target="#signup-form"
+					hx-target="#signup"
 					hx-swap="outerHTML"
 				>
 					<div class="grid grid-cols-1 gap-y-6 md:grid-cols-2 md:gap-x-4">
